@@ -1,4 +1,5 @@
 <?php
+// app/Models/Complaint.php
 
 namespace App\Models;
 
@@ -17,50 +18,64 @@ class Complaint extends Model
         'category',
         'location',
         'description',
-        'photo',
+        'photos',
         'status',
         'assigned_officer',
         'remarks',
+        'progress_photo',
+        'progress_note',
+        'progress_photos',
+        'progress_updates',
+        'cancellation_reason',
     ];
 
-    // Automatically generate a reference number on creation
+    protected $casts = [
+        'photos'           => 'array',
+        'progress_photos'  => 'array',
+        'progress_updates' => 'array',
+    ];
+
     protected static function booted(): void
     {
         static::creating(function (Complaint $complaint) {
             $year  = now()->year;
             $count = static::whereYear('created_at', $year)->count() + 1;
             $complaint->reference_number = 'MR-' . $year . '-' . str_pad($count, 4, '0', STR_PAD_LEFT);
-
             if (empty($complaint->status)) {
                 $complaint->status = 'Pending';
             }
         });
     }
 
-    // ── Relationships ──────────────────────────────────────────
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    // ── Helpers ────────────────────────────────────────────────
-    public function statusColor(): string
+    public function messages()
     {
-        return match ($this->status) {
-            'Pending'     => '#F59E0B',
-            'In Progress' => '#3182BD',
-            'Resolved'    => '#10B981',
-            default       => '#9ECAE1',
-        };
+        return $this->hasMany(ComplaintMessage::class);
     }
 
-    public function statusBg(): string
+    // Comments from residents on progress updates
+    public function comments()
     {
-        return match ($this->status) {
-            'Pending'     => '#FEF3C7',
-            'In Progress' => '#EFF3FF',
-            'Resolved'    => '#D1FAE5',
-            default       => '#F3F4F6',
-        };
+        return $this->hasMany(ComplaintComment::class);
+    }
+
+    public function unreadMessagesForAdmin(): int
+    {
+        return $this->messages()
+            ->where('sender_role', 'resident')
+            ->where('is_read', false)
+            ->count();
+    }
+
+    public function unreadMessagesForResident(): int
+    {
+        return $this->messages()
+            ->where('sender_role', 'admin')
+            ->where('is_read', false)
+            ->count();
     }
 }

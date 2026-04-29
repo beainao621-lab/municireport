@@ -1,104 +1,146 @@
+{{-- resources/views/admin/reports.blade.php --}}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Reports – MuniciReport Admin</title>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-        :root {
-            --deep: #08519C; --mid: #3182BD; --teal: #6BAED6; --light-teal: #9ECAE1;
-            --pale: #C6DBEF; --very-pale: #EFF3FF; --text-dark: #0a2a4a; --text-muted: #4a6fa5;
-            --border: #C6DBEF; --sidebar-w: 250px;
-        }
-        html, body { height: 100%; }
-        body { font-family: 'DM Sans', sans-serif; background: var(--very-pale); color: var(--text-dark); display: flex; min-height: 100vh; }
 
+        :root {
+            --sidebar-w: 250px;
+            --brand-deep:   #08519C;
+            --brand-mid:    #3182BD;
+            --brand-teal:   #6BAED6;
+            --brand-pale:   #9ECAE1;
+            --bg-page:      #EFF3FF;
+            --bg-surface:   #ffffff;
+            --bg-raised:    #F8FAFF;
+            --bg-input:     #EFF3FF;
+            --text-primary:  #0a2a4a;
+            --text-muted:    #4a6fa5;
+            --border:       #C6DBEF;
+            --color-orange: #D97706;
+            --color-blue:   #1D6FAB;
+            --color-green:  #047857;
+            --color-green-bg:  #D1FAE5;
+            --color-orange-bg: #FEF3C7;
+            --color-blue-bg:   #EFF3FF;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-page:    #0d1b2a; --bg-surface: #0f2035;
+                --bg-raised:  #162840; --bg-input:   #1a3050;
+                --text-primary: #e2e8f0; --text-muted: #7fb3d3;
+                --border: #1e3a5f;
+                --color-orange: #F59E0B; --color-blue: #60A5FA;
+                --color-green:  #34D399;
+                --color-green-bg:  rgba(6,78,59,0.45);
+                --color-orange-bg: rgba(120,53,15,0.45);
+                --color-blue-bg:   rgba(30,58,138,0.35);
+            }
+        }
+
+        html, body { height: 100%; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg-page); color: var(--text-primary); display: flex; min-height: 100vh; }
+
+        /* ── Sidebar ── */
         .sidebar { width: var(--sidebar-w); background: #08519C; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 200; transition: transform .28s cubic-bezier(.4,0,.2,1); }
         .brand { display: flex; align-items: center; gap: 11px; padding: 22px 20px 18px; border-bottom: 1.5px solid rgba(255,255,255,0.15); }
-        .brand-icon { width: 40px; height: 40px; background: linear-gradient(135deg,#3182BD,#9ECAE1); border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 19px; flex-shrink: 0; box-shadow: 0 4px 10px rgba(0,0,0,0.25); }
-        .brand-name { font-size: 14px; font-weight: 700; color: #fff; }
+        .brand-icon { width: 40px; height: 40px; background: linear-gradient(135deg,#3182BD,#9ECAE1); border-radius: 11px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 10px rgba(0,0,0,0.25); }
+        .brand-name { font-size: 14px; font-weight: 700; color: #fff; letter-spacing: -0.2px; }
         .brand-sub  { font-size: 11px; color: #9ECAE1; margin-top: 2px; }
-        .nav-section { padding: 16px 12px 8px; }
-        .nav-label { font-size: 10px; font-weight: 700; letter-spacing: 1.4px; color: #9ECAE1; text-transform: uppercase; padding: 0 8px; margin-bottom: 8px; display: block; }
-        .nav-item { display: flex; align-items: center; gap: 10px; padding: 12px 14px; font-size: 14px; font-weight: 500; color: #C6DBEF; text-decoration: none; border-radius: 10px; border-left: 3px solid transparent; transition: all .15s; margin-bottom: 3px; }
-        .nav-item:hover { background: rgba(255,255,255,0.12); color: #fff; }
+        .nav-section { padding: 16px 12px 8px; flex: 1; }
+        .nav-item { display: flex; align-items: center; gap: 10px; padding: 11px 14px; font-size: 13.5px; font-weight: 500; color: #C6DBEF; text-decoration: none; border-radius: 10px; border-left: 3px solid transparent; transition: all .15s; margin-bottom: 3px; }
+        .nav-item:hover  { background: rgba(255,255,255,0.12); color: #fff; }
         .nav-item.active { background: rgba(255,255,255,0.18); color: #fff; border-left-color: #9ECAE1; font-weight: 600; }
-        .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
-        .nav-divider { margin: 8px 12px; border: none; border-top: 1px solid rgba(255,255,255,0.1); }
-        .sidebar-footer { margin-top: auto; padding: 16px 12px; }
-        .logout-btn { display: flex; align-items: center; gap: 10px; padding: 12px 14px; font-size: 14px; font-weight: 500; color: #9ECAE1; border: none; background: none; border-radius: 10px; cursor: pointer; width: 100%; transition: all .15s; }
-        .logout-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
-        .logout-btn svg { width: 18px; height: 18px; }
-
+        .nav-item i { width: 18px; text-align: center; font-size: 14px; flex-shrink: 0; }
         .overlay { display: none; position: fixed; inset: 0; background: rgba(8,81,156,0.4); z-index: 150; }
         .overlay.show { display: block; }
 
+        /* ── Main ── */
         .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
-        .topbar { background: white; border-bottom: 1.5px solid var(--border); padding: 0 32px; height: 64px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
-        .hamburger { display: none; background: none; border: none; cursor: pointer; color: #4a6fa5; padding: 4px; }
-        .hamburger svg { width: 22px; height: 22px; }
-        .topbar-badge { font-size: 11px; font-weight: 700; color: #4a6fa5; background: var(--very-pale); border: 1.5px solid var(--border); border-radius: 999px; padding: 3px 10px; }
-        .topbar-right { display: flex; align-items: center; gap: 10px; margin-left: auto; }
-        .notif-btn { position: relative; width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid var(--border); background: white; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #4a6fa5; }
-        .notif-btn svg { width: 19px; height: 19px; }
-        .notif-dot { position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; background: #ef4444; border-radius: 50%; border: 2px solid white; }
-        .user-pill { display: flex; align-items: center; gap: 9px; padding: 5px 14px 5px 5px; border: 1.5px solid var(--border); border-radius: 999px; background: white; cursor: pointer; }
-        .avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg,#08519C,#6BAED6); color: white; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
-        .user-name { font-size: 13px; font-weight: 600; color: #0a2a4a; }
-
         .content { flex: 1; padding: 36px 44px; }
-        .page-title { font-family: 'DM Serif Display', serif; font-size: 30px; font-weight: 400; color: #0a2a4a; margin-bottom: 4px; }
-        .page-sub { font-size: 14.5px; color: #4a6fa5; margin-bottom: 28px; }
 
-        /* Report type selector */
-        .report-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
-        .report-card { background: white; border: 1.5px solid var(--border); border-radius: 16px; padding: 24px; text-align: center; text-decoration: none; transition: all .18s; display: flex; flex-direction: column; align-items: center; gap: 10px; }
-        .report-card:hover { border-color: #6BAED6; background: #F8FAFF; transform: translateY(-2px); }
-        .report-card.active-card { border-color: #08519C; background: linear-gradient(135deg,#EFF3FF,#C6DBEF); }
-        .report-icon { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-        .report-icon svg { width: 20px; height: 20px; }
-        .icon-daily   { background: #D1FAE5; color: #065F46; }
-        .icon-weekly  { background: #EFF3FF;  color: #3182BD; }
-        .icon-monthly { background: #FEF3C7; color: #B45309; }
-        .report-type { font-size: 15px; font-weight: 700; color: #0a2a4a; }
-        .report-period { font-size: 12.5px; color: #4a6fa5; }
-        .btn-generate { margin-top: 6px; padding: 9px 20px; border: none; border-radius: 9px; font-size: 13.5px; font-weight: 700; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all .15s; }
-        .btn-daily   { background: #D1FAE5; color: #065F46; }
-        .btn-weekly  { background: #08519C; color: white; box-shadow: 0 4px 14px rgba(8,81,156,0.3); }
-        .btn-monthly { background: #F59E0B; color: white; box-shadow: 0 4px 14px rgba(245,158,11,0.3); }
+        .page-title { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; color: var(--text-primary); margin-bottom: 4px; }
+        .page-sub { font-size: 14px; color: var(--text-muted); margin-bottom: 28px; }
 
-        /* Report table */
-        .report-section { background: white; border: 1.5px solid var(--border); border-radius: 16px; overflow: hidden; }
+        /* ── Report type cards ── */
+        .report-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+        .report-card { background: var(--bg-surface); border: 1.5px solid var(--border); border-radius: 16px; padding: 24px; text-align: center; text-decoration: none; transition: all .18s; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .report-card:hover { border-color: var(--brand-teal); background: var(--bg-raised); transform: translateY(-2px); }
+        .report-card.active-card { border-color: var(--brand-deep); background: var(--bg-raised); }
+        .report-icon { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .icon-daily   { background: var(--color-green-bg);  color: var(--color-green); }
+        .icon-weekly  { background: var(--color-blue-bg);   color: var(--color-blue); }
+        .icon-monthly { background: var(--color-orange-bg); color: var(--color-orange); }
+        .report-type { font-size: 15px; font-weight: 700; color: var(--text-primary); }
+        .report-period { font-size: 12.5px; color: var(--text-muted); }
+        .btn-generate { margin-top: 6px; padding: 9px 20px; border: none; border-radius: 9px; font-size: 13.5px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; text-decoration: none; display: inline-block; transition: opacity .15s; }
+        .btn-generate:hover { opacity: .85; }
+        .btn-daily   { background: var(--color-green-bg);  color: var(--color-green); }
+        .btn-weekly  { background: var(--brand-deep);       color: #fff; }
+        .btn-monthly { background: var(--color-orange);     color: #fff; }
+
+        /* ── Advanced filter panel ── */
+        .filter-panel { background: var(--bg-surface); border: 1.5px solid var(--border); border-radius: 14px; padding: 20px 24px; margin-bottom: 24px; }
+        .filter-panel-title { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
+        .filter-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
+        .filter-field { display: flex; flex-direction: column; gap: 5px; }
+        .filter-field label { font-size: 11px; font-weight: 600; color: var(--text-muted); }
+        .filter-field select,
+        .filter-field input[type="date"] {
+            padding: 9px 12px; border: 1.5px solid var(--border); border-radius: 9px;
+            font-size: 13px; font-family: 'Inter', sans-serif;
+            background: var(--bg-input); color: var(--text-primary); outline: none;
+        }
+        .filter-field select { padding-right: 32px; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%234a6fa5' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 9px center; }
+        .filter-field input[type="date"]:focus,
+        .filter-field select:focus { border-color: var(--brand-mid); background: var(--bg-surface); }
+        .filter-apply-btn { padding: 9px 22px; background: linear-gradient(135deg,#08519C,#3182BD); color: white; border: none; border-radius: 9px; font-size: 13.5px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; white-space: nowrap; }
+        .filter-apply-btn:hover { opacity: .88; }
+        .filter-reset-link { font-size: 12.5px; color: var(--text-muted); text-decoration: none; padding: 9px 4px; white-space: nowrap; }
+        .filter-reset-link:hover { color: var(--brand-mid); }
+
+        /* ── Report table section ── */
+        .report-section { background: var(--bg-surface); border: 1.5px solid var(--border); border-radius: 16px; overflow: hidden; }
         .report-header { padding: 22px 24px; border-bottom: 1.5px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
-        .report-heading { font-size: 15px; font-weight: 700; color: #0a2a4a; }
-        .export-btns { display: flex; gap: 8px; }
-        .btn-export { padding: 9px 18px; border: 1.5px solid var(--border); border-radius: 9px; background: white; color: #4a6fa5; font-size: 13px; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all .15s; }
-        .btn-export:hover { background: #EFF3FF; border-color: #6BAED6; color: #3182BD; }
+        .report-heading { font-size: 15px; font-weight: 700; color: var(--text-primary); }
+        .report-period-label { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+        .btn-excel { display: inline-flex; align-items: center; gap: 8px; padding: 10px 22px; border: none; border-radius: 10px; background: linear-gradient(135deg, #1D6F42, #217346); color: white; font-size: 14px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; box-shadow: 0 4px 14px rgba(29,111,66,0.3); transition: opacity .15s, transform .15s; }
+        .btn-excel:hover { opacity: .9; transform: translateY(-1px); }
+
         table { width: 100%; border-collapse: collapse; }
-        thead th { padding: 14px 20px; text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #4a6fa5; background: #F8FAFF; border-bottom: 1.5px solid var(--border); }
+        thead th { padding: 14px 20px; text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); background: var(--bg-raised); border-bottom: 1.5px solid var(--border); }
         thead th:not(:first-child) { text-align: center; }
-        tbody tr { border-bottom: 1px solid #EFF3FF; }
-        tbody tr:last-child { border-bottom: 2px solid var(--border); font-weight: 700; background: #F8FAFF; }
-        tbody td { padding: 15px 20px; font-size: 13.5px; color: #0a2a4a; }
+        tbody tr { border-bottom: 1px solid var(--border); }
+        tbody tr:last-child { border-bottom: 2px solid var(--border); font-weight: 700; background: var(--bg-raised); }
+        tbody td { padding: 15px 20px; font-size: 13.5px; color: var(--text-primary); }
         tbody td:not(:first-child) { text-align: center; }
-        .num-new      { color: #3182BD; font-weight: 700; }
-        .num-progress { color: #F59E0B; font-weight: 700; }
-        .num-resolved { color: #10B981; font-weight: 700; }
-        .num-total    { color: #0a2a4a; font-weight: 700; }
+        .num-new      { color: var(--color-blue);  font-weight: 700; }
+        .num-progress { color: var(--color-orange); font-weight: 700; }
+        .num-resolved { color: var(--color-green);  font-weight: 700; }
+        .num-total    { color: var(--text-primary); font-weight: 700; }
+
+        /* Active filter badge */
+        .active-filter-badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px 3px 8px; background: var(--color-blue-bg); border: 1.5px solid var(--border); border-radius: 999px; font-size: 11.5px; color: var(--color-blue); font-weight: 600; }
+        .active-filter-badge a { color: var(--color-blue); text-decoration: none; font-size: 13px; margin-left: 3px; }
+        .active-filter-badge a:hover { color: var(--brand-deep); }
 
         @media (max-width: 1024px) { .content { padding: 24px; } }
         @media (max-width: 768px) {
             .sidebar { transform: translateX(-100%); }
             .sidebar.open { transform: translateX(0); box-shadow: 6px 0 28px rgba(8,81,156,0.3); }
             .main { margin-left: 0; }
-            .hamburger { display: flex; }
-            .topbar { padding: 0 16px; }
             .content { padding: 16px; }
             .report-cards { grid-template-columns: 1fr; }
-            .user-name { display: none; }
             .report-section { overflow-x: auto; }
+            .filter-row { flex-direction: column; }
         }
     </style>
 </head>
@@ -107,118 +149,127 @@
 
 <aside class="sidebar" id="sidebar">
     <div class="brand">
-        <div class="brand-icon">🏛</div>
-        <div>
-            <div class="brand-name">MuniciReport</div>
-            <div class="brand-sub">Admin Panel</div>
-        </div>
+        <div class="brand-icon"><i class="fa-solid fa-landmark" style="font-size:18px;color:#fff;"></i></div>
+        <div><div class="brand-name">MuniciReport</div><div class="brand-sub">Admin Panel</div></div>
     </div>
     <div class="nav-section">
-        <span class="nav-label">Overview</span>
-        <a href="{{ route('admin.dashboard') }}" class="nav-item">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
-            Dashboard
-        </a>
-        <a href="{{ route('admin.complaints') }}" class="nav-item">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-            Complaints
-        </a>
-    </div>
-    <div class="nav-section">
-        <hr class="nav-divider">
-        <span class="nav-label">Management</span>
-        <a href="#" class="nav-item">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            Assign / Resolve
-        </a>
-        <a href="{{ route('admin.citizens') }}" class="nav-item">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-            Citizens
-        </a>
-        <a href="{{ route('admin.reports') }}" class="nav-item active">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-            Reports
-        </a>
-    </div>
-    <div class="sidebar-footer">
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-            <button type="submit" class="logout-btn">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-                Logout
-            </button>
-        </form>
+        <a href="{{ route('admin.dashboard') }}" class="nav-item"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+        <a href="{{ route('admin.complaints') }}" class="nav-item"><i class="fa-solid fa-clipboard-list"></i> Complaints</a>
+        <a href="{{ route('admin.resolved') }}" class="nav-item"><i class="fa-solid fa-circle-check"></i> Resolved</a>
+        <a href="{{ route('admin.citizens') }}" class="nav-item"><i class="fa-solid fa-users"></i> Citizens</a>
+        <a href="{{ route('admin.reports') }}" class="nav-item active"><i class="fa-solid fa-chart-bar"></i> Reports</a>
     </div>
 </aside>
 
 <div class="main">
-    <header class="topbar">
-        <button class="hamburger" onclick="openSidebar()">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-        </button>
-        <div style="display:flex;align-items:center;gap:12px;">
-            <span class="topbar-badge">Admin Panel</span>
-        </div>
-        <div class="topbar-right">
-            <button class="notif-btn">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-                <span class="notif-dot"></span>
-            </button>
-            <div class="user-pill">
-                <div class="avatar">{{ strtoupper(substr(Auth::user()->name, 0, 2)) }}</div>
-                <span class="user-name">{{ Auth::user()->name }}</span>
-            </div>
-        </div>
-    </header>
+    <x-topbar :role="'admin'" />
 
     <div class="content">
         <h1 class="page-title">Summary Reports</h1>
-        <p class="page-sub">Generate daily, weekly, and monthly complaint reports.</p>
+        <p class="page-sub">Generate and filter daily, weekly, and monthly complaint reports.</p>
 
-        <!-- Report type cards -->
+        {{-- Report type cards --}}
         <div class="report-cards">
             <div class="report-card {{ $type == 'daily' ? 'active-card' : '' }}">
-                <div class="report-icon icon-daily">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                </div>
+                <div class="report-icon icon-daily"><i class="fa-solid fa-clock"></i></div>
                 <div class="report-type">Daily Report</div>
                 <div class="report-period">Today's summary</div>
-                <a href="{{ route('admin.reports', ['type' => 'daily']) }}" class="btn-generate btn-daily">Generate ↗</a>
+                <a href="{{ route('admin.reports', ['type' => 'daily']) }}" class="btn-generate btn-daily">
+                    View <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:11px;"></i>
+                </a>
             </div>
             <div class="report-card {{ $type == 'weekly' ? 'active-card' : '' }}">
-                <div class="report-icon icon-weekly">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                </div>
+                <div class="report-icon icon-weekly"><i class="fa-solid fa-calendar-week"></i></div>
                 <div class="report-type">Weekly Report</div>
                 <div class="report-period">{{ now()->startOfWeek()->format('M j') }}–{{ now()->endOfWeek()->format('j, Y') }}</div>
-                <a href="{{ route('admin.reports', ['type' => 'weekly']) }}" class="btn-generate btn-weekly">Generate ↗</a>
+                <a href="{{ route('admin.reports', ['type' => 'weekly']) }}" class="btn-generate btn-weekly">
+                    View <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:11px;"></i>
+                </a>
             </div>
             <div class="report-card {{ $type == 'monthly' ? 'active-card' : '' }}">
-                <div class="report-icon icon-monthly">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                </div>
+                <div class="report-icon icon-monthly"><i class="fa-solid fa-chart-column"></i></div>
                 <div class="report-type">Monthly Report</div>
                 <div class="report-period">{{ now()->format('F Y') }}</div>
-                <a href="{{ route('admin.reports', ['type' => 'monthly']) }}" class="btn-generate btn-monthly">Generate ↗</a>
+                <a href="{{ route('admin.reports', ['type' => 'monthly']) }}" class="btn-generate btn-monthly">
+                    View <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:11px;"></i>
+                </a>
             </div>
         </div>
 
-        <!-- Report table -->
+        {{-- Advanced filter panel --}}
+        <div class="filter-panel">
+            <div class="filter-panel-title"><i class="fa-solid fa-sliders"></i> Filter Report</div>
+            <form method="GET" action="{{ route('admin.reports') }}">
+                <input type="hidden" name="type" value="{{ $type !== 'custom' ? $type : 'monthly' }}">
+                <div class="filter-row">
+                    <div class="filter-field">
+                        <label>Category</label>
+                        <select name="filter_category">
+                            <option value="all">All Categories</option>
+                            @foreach($allCategories as $cat)
+                                <option value="{{ $cat }}" {{ $filterCategory == $cat ? 'selected' : '' }}>{{ $cat }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="filter-field">
+                        <label>Date From</label>
+                        <input type="date" name="date_from" value="{{ $customStart ?? '' }}">
+                    </div>
+                    <div class="filter-field">
+                        <label>Date To</label>
+                        <input type="date" name="date_to" value="{{ $customEnd ?? '' }}">
+                    </div>
+                    <button type="submit" class="filter-apply-btn"><i class="fa-solid fa-filter"></i> Apply Filter</button>
+                    <a href="{{ route('admin.reports', ['type' => $type !== 'custom' ? $type : 'monthly']) }}" class="filter-reset-link">
+                        <i class="fa-solid fa-xmark"></i> Reset
+                    </a>
+                </div>
+            </form>
+
+            {{-- Active filter badges --}}
+            @if($filterCategory !== 'all' || $type === 'custom')
+            <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
+                @if($filterCategory !== 'all')
+                <span class="active-filter-badge">
+                    <i class="fa-solid fa-tag"></i> {{ $filterCategory }}
+                    <a href="{{ route('admin.reports', array_merge(request()->except('filter_category'), ['filter_category' => 'all'])) }}">×</a>
+                </span>
+                @endif
+                @if($type === 'custom' && $customStart && $customEnd)
+                <span class="active-filter-badge">
+                    <i class="fa-solid fa-calendar-days"></i>
+                    {{ \Carbon\Carbon::parse($customStart)->format('M j, Y') }} – {{ \Carbon\Carbon::parse($customEnd)->format('M j, Y') }}
+                    <a href="{{ route('admin.reports', ['type' => 'monthly']) }}">×</a>
+                </span>
+                @endif
+            </div>
+            @endif
+        </div>
+
+        {{-- Report table --}}
         <div class="report-section">
             <div class="report-header">
                 <div>
-                    <div class="report-heading">Latest generated report — {{ $label }} ({{ ucfirst($type) }})</div>
+                    <div class="report-heading">
+                        {{ $type === 'custom' ? 'Custom Range' : ucfirst($type) }} Report — {{ $label }}
+                        @if($filterCategory !== 'all')
+                            <span style="font-size:12px;font-weight:500;color:var(--text-muted);"> · {{ $filterCategory }}</span>
+                        @endif
+                    </div>
+                    <div class="report-period-label">
+                        Showing {{ $rows->count() }} {{ $filterCategory !== 'all' ? 'result' : 'categor' }}{{ $rows->count() == 1 ? ($filterCategory !== 'all' ? '' : 'y') : ($filterCategory !== 'all' ? 's' : 'ies') }}
+                        · {{ $totals['total'] }} total complaints
+                    </div>
                 </div>
-                <div class="export-btns">
-                    <button class="btn-export" onclick="window.print()">Export PDF</button>
-                    <button class="btn-export" onclick="exportCSV()">Export CSV</button>
-                </div>
+                <button class="btn-excel" onclick="exportExcel()">
+                    <i class="fa-solid fa-file-excel"></i> Export to Excel
+                </button>
             </div>
-            <table>
+            <table id="reportTable">
                 <thead>
                     <tr>
                         <th>Category</th>
-                        <th>New</th>
+                        <th>New / Pending</th>
                         <th>In Progress</th>
                         <th>Resolved</th>
                         <th>Total</th>
@@ -235,13 +286,14 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="5" style="text-align:center;color:#4a6fa5;padding:32px;">No data for this period.</td>
+                        <td colspan="5" style="text-align:center;color:var(--text-muted);padding:32px;">
+                            No data for this period{{ $filterCategory !== 'all' ? ' and category' : '' }}.
+                        </td>
                     </tr>
                     @endforelse
-
                     @if($rows->count() > 0)
                     <tr>
-                        <td>Total</td>
+                        <td><strong>TOTAL</strong></td>
                         <td><span class="num-new">{{ $totals['new'] }}</span></td>
                         <td><span class="num-progress">{{ $totals['in_progress'] }}</span></td>
                         <td><span class="num-resolved">{{ $totals['resolved'] }}</span></td>
@@ -258,16 +310,34 @@
     function openSidebar()  { document.getElementById('sidebar').classList.add('open'); document.getElementById('overlay').classList.add('show'); }
     function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('show'); }
 
-    function exportCSV() {
-        const rows  = document.querySelectorAll('table tr');
-        const lines = Array.from(rows).map(r =>
-            Array.from(r.querySelectorAll('th,td')).map(c => '"' + c.innerText + '"').join(',')
-        );
-        const blob = new Blob([lines.join('\n')], { type: 'text/csv' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'municireport-{{ $type }}-{{ now()->format("Y-m-d") }}.csv';
+    // Sync the hidden type field when date range is filled
+    document.querySelectorAll('input[name="date_from"], input[name="date_to"]').forEach(function(el) {
+        el.addEventListener('change', function() {
+            var from = document.querySelector('input[name="date_from"]').value;
+            var to   = document.querySelector('input[name="date_to"]').value;
+            if (from && to) {
+                document.querySelector('input[name="type"]').value = 'custom';
+            }
+        });
+    });
+
+    function exportExcel() {
+        var table = document.getElementById('reportTable');
+        var rows  = Array.from(table.querySelectorAll('tr'));
+        var tsv   = rows.map(function(row) {
+            return Array.from(row.querySelectorAll('th, td'))
+                .map(function(cell) { return '"' + cell.innerText.replace(/"/g, '""') + '"'; })
+                .join('\t');
+        }).join('\n');
+        var typeLabel = '{{ $type === "custom" ? "Custom Range" : ucfirst($type) }}';
+        var header = '"MuniciReport – ' + typeLabel + ' Complaint Report"\t\t\t\t\n"Period: {{ $label }}"\t\t\t\t\n"Category Filter: {{ $filterCategory !== "all" ? $filterCategory : "All Categories" }}"\t\t\t\t\n"Generated: ' + new Date().toLocaleString('en-PH') + '"\t\t\t\t\n\n';
+        var blob = new Blob(['\uFEFF' + header + tsv], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+        var a    = document.createEleme    nt('a');
+        a.href   = URL.createObjectURL(blob);
+        a.download = 'MuniciReport-{{ $type }}-{{ now()->format("Y-m-d") }}.xls';
+        document.body.appendChild(a);
         a.click();
+        document.body.removeChild(a);
     }
 </script>
 </body>

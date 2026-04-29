@@ -34,28 +34,34 @@ class AuthController extends Controller
         return view('register');
     }
 
-    public function register(Request $request)
-    {
-        $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:users',
-            'phone'    => 'required|string|max:20',
-            'location' => 'required|string|max:255',
-            'password' => 'required|min:6|confirmed',
-        ]);
+    // AuthController.php — register method
+public function register(Request $request)
+{
+    $request->validate([
+        'name'     => 'required|string|max:255',
+        'email'    => 'required|email|unique:users',
+        'phone'    => 'required|string|max:20',
+        'location' => 'required|string|max:255',
+        'password' => 'required|min:6|confirmed',
+    ]);
 
-        User::create([
-            'name'     => $request->name,
-            'email'    => $request->email,
-            'phone'    => $request->phone,
-            'location' => $request->location,
-            'password' => Hash::make($request->password),
-            'role'     => 'resident',
-        ]);
+   $user = User::create([
+    'name'     => $request->name,
+    'email'    => $request->email,
+    'phone'    => $request->phone,
+    'location' => $request->location,
+    'password' => $request->password,
+    'role'     => 'resident',
+]);
 
-        return redirect('/login')->with('success', 'Account created! Please login.');
-    }
-
+    // ← Create profile record para gumana ang getProfilePictureUrl()
+    \App\Models\UserProfile::create([
+        'user_id'  => $user->id,
+        'phone'    => $request->phone,
+        'barangay' => $request->location,
+    ]);
+    return redirect('/login')->with('success', 'Account created! Please login.');
+}
     public function logout()
     {
         Auth::logout();
