@@ -180,10 +180,11 @@
             transform: translateY(-50%);
             color: #3182BD;
             width: 14px; height: 14px;
+            pointer-events: none;
         }
         input {
             width: 100%;
-            padding: 9px 10px 9px 34px;
+            padding: 9px 38px 9px 34px;
             border: 1.5px solid #9ECAE1;
             border-radius: 10px;
             font-size: 13px;
@@ -199,6 +200,19 @@
             background: white;
         }
         input::placeholder { color: #9ECAE1; }
+
+        .eye-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #3182BD;
+            user-select: none;
+            font-size: 16px;
+            line-height: 1;
+            padding: 2px 4px;
+        }
 
         .btn {
             width: 100%;
@@ -250,13 +264,10 @@
         }
         .footer-link a:hover { text-decoration: underline; }
 
-        /* Tablet */
         @media (max-width: 600px) {
             .card { padding: 20px 20px 18px; border-radius: 20px; }
             h2 { font-size: 20px; }
         }
-
-        /* Mobile — single column */
         @media (max-width: 480px) {
             body { padding: 10px; }
             .card { padding: 18px 16px 16px; }
@@ -330,7 +341,8 @@
                     <label>Password</label>
                     <div class="input-wrap">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-                        <input type="password" name="password" placeholder="Min. 6 characters" autocomplete="new-password" required>
+                        <input type="password" name="password" id="reg-pass" placeholder="Min. 6 characters" autocomplete="new-password" required>
+                        <span class="eye-btn" onclick="togglePass('reg-pass', this)">👁</span>
                     </div>
                 </div>
 
@@ -338,7 +350,8 @@
                     <label>Confirm Password</label>
                     <div class="input-wrap">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-                        <input type="password" name="password_confirmation" placeholder="Repeat password" autocomplete="new-password" required>
+                        <input type="password" name="password_confirmation" id="reg-confirm" placeholder="Repeat password" autocomplete="new-password" required>
+                        <span class="eye-btn" onclick="togglePass('reg-confirm', this)">👁</span>
                     </div>
                 </div>
 
@@ -350,5 +363,18 @@
         <div class="divider">or</div>
         <p class="footer-link">Already have an account? <a href="/login">Sign in</a></p>
     </div>
+
+    <script>
+        function togglePass(id, el) {
+            var input = document.getElementById(id);
+            if (input.type === 'password') {
+                input.type = 'text';
+                el.textContent = '👁';
+            } else {
+                input.type = 'password';
+                el.textContent = '👁';
+            }
+        }
+    </script>
 </body>
 </html>

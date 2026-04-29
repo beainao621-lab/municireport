@@ -322,10 +322,11 @@
 
             <div class="field">
                 <label>Password</label>
-                <div class="input-wrap">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-                    <input type="password" name="password" placeholder="Enter your password" autocomplete="off" required>
-                </div>
+               <div class="input-wrap">
+    <svg ...lock icon...></svg>
+    <input type="password" name="password" id="password" placeholder="Enter your password" autocomplete="off" required>
+    <span onclick="togglePass('password', this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;color:#5a9fd4;user-select:none;font-size:18px;">👁</span>
+</div>
             </div>
 
             <div class="forgot"><a href="#">Forgot password?</a></div>
@@ -336,5 +337,17 @@
         <p class="footer-link">Don't have an account? <a href="/register">Create one</a></p>
 
     </div>
+    <script>
+function togglePass(id, el) {
+    var input = document.getElementById(id);
+    if (input.type === 'password') {
+        input.type = 'text';
+        el.textContent = '👁';
+    } else {
+        input.type = 'password';
+        el.textContent = '👁';
+    }
+}
+</script>
 </body>
 </html>

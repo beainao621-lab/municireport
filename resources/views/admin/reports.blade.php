@@ -50,16 +50,36 @@
         body { font-family: 'Inter', sans-serif; background: var(--bg-page); color: var(--text-primary); display: flex; min-height: 100vh; }
 
         /* ── Sidebar ── */
-        .sidebar { width: var(--sidebar-w); background: #08519C; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 200; transition: transform .28s cubic-bezier(.4,0,.2,1); }
+        .sidebar {
+            width: var(--sidebar-w);
+            background: #08519C;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0; left: 0; bottom: 0;
+            z-index: 200;
+            transition: transform .28s cubic-bezier(.4,0,.2,1);
+        }
         .brand { display: flex; align-items: center; gap: 11px; padding: 22px 20px 18px; border-bottom: 1.5px solid rgba(255,255,255,0.15); }
         .brand-icon { width: 40px; height: 40px; background: linear-gradient(135deg,#3182BD,#9ECAE1); border-radius: 11px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 10px rgba(0,0,0,0.25); }
         .brand-name { font-size: 14px; font-weight: 700; color: #fff; letter-spacing: -0.2px; }
         .brand-sub  { font-size: 11px; color: #9ECAE1; margin-top: 2px; }
         .nav-section { padding: 16px 12px 8px; flex: 1; }
-        .nav-item { display: flex; align-items: center; gap: 10px; padding: 11px 14px; font-size: 13.5px; font-weight: 500; color: #C6DBEF; text-decoration: none; border-radius: 10px; border-left: 3px solid transparent; transition: all .15s; margin-bottom: 3px; }
+        .nav-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 11px 14px;
+            font-size: 13.5px; font-weight: 500;
+            color: #C6DBEF;
+            text-decoration: none;
+            border-radius: 10px;
+            border-left: 3px solid transparent;
+            transition: all .15s;
+            margin-bottom: 3px;
+        }
         .nav-item:hover  { background: rgba(255,255,255,0.12); color: #fff; }
         .nav-item.active { background: rgba(255,255,255,0.18); color: #fff; border-left-color: #9ECAE1; font-weight: 600; }
         .nav-item i { width: 18px; text-align: center; font-size: 14px; flex-shrink: 0; }
+
         .overlay { display: none; position: fixed; inset: 0; background: rgba(8,81,156,0.4); z-index: 150; }
         .overlay.show { display: block; }
 
@@ -132,6 +152,8 @@
         .active-filter-badge a { color: var(--color-blue); text-decoration: none; font-size: 13px; margin-left: 3px; }
         .active-filter-badge a:hover { color: var(--brand-deep); }
 
+        /* ── Responsive ── */
+        @media (max-width: 1200px) { .report-cards { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 1024px) { .content { padding: 24px; } }
         @media (max-width: 768px) {
             .sidebar { transform: translateX(-100%); }
@@ -141,6 +163,12 @@
             .report-cards { grid-template-columns: 1fr; }
             .report-section { overflow-x: auto; }
             .filter-row { flex-direction: column; }
+            .filter-field select,
+            .filter-field input[type="date"] { width: 100%; }
+            .filter-apply-btn { width: 100%; text-align: center; }
+        }
+        @media (max-width: 480px) {
+            .report-cards { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -148,11 +176,11 @@
 <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 
 <aside class="sidebar" id="sidebar">
-   <div class="brand" style="flex-direction:column; align-items:center; justify-content:center; padding: 16px 20px 14px; border-bottom: 1.5px solid rgba(255,255,255,0.15); display:flex; gap:0;">
-    <img src="{{ asset('images/logo.png') }}" alt="MuniciReport"
-        style="height:90px; width:auto; object-fit:contain; display:block; margin-bottom:2px;">
-    <div style="color:#fff; font-size:12px; font-weight:700; letter-spacing:2px; text-align:center; font-family:'Inter', sans-serif;">MUNICIREPORT</div>
-</div>
+    <div class="brand" style="flex-direction:column; align-items:center; justify-content:center; padding: 16px 20px 14px; border-bottom: 1.5px solid rgba(255,255,255,0.15); display:flex; gap:0;">
+        <img src="{{ asset('images/logo.png') }}" alt="MuniciReport"
+            style="height:90px; width:auto; object-fit:contain; display:block; margin-bottom:2px;">
+        <div style="color:#fff; font-size:12px; font-weight:700; letter-spacing:2px; text-align:center; font-family:'Inter', sans-serif;">MUNICIREPORT</div>
+    </div>
     <div class="nav-section">
         <a href="{{ route('admin.dashboard') }}" class="nav-item"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
         <a href="{{ route('admin.complaints') }}" class="nav-item"><i class="fa-solid fa-clipboard-list"></i> Complaints</a>
@@ -333,7 +361,7 @@
         var typeLabel = '{{ $type === "custom" ? "Custom Range" : ucfirst($type) }}';
         var header = '"MuniciReport – ' + typeLabel + ' Complaint Report"\t\t\t\t\n"Period: {{ $label }}"\t\t\t\t\n"Category Filter: {{ $filterCategory !== "all" ? $filterCategory : "All Categories" }}"\t\t\t\t\n"Generated: ' + new Date().toLocaleString('en-PH') + '"\t\t\t\t\n\n';
         var blob = new Blob(['\uFEFF' + header + tsv], { type: 'application/vnd.ms-excel;charset=utf-8;' });
-        var a    = document.createEleme    nt('a');
+        var a    = document.createElement('a');
         a.href   = URL.createObjectURL(blob);
         a.download = 'MuniciReport-{{ $type }}-{{ now()->format("Y-m-d") }}.xls';
         document.body.appendChild(a);
