@@ -9,11 +9,25 @@ return new class extends Migration
 {
     public function up(): void
     {
-        DB::statement("ALTER TABLE complaints MODIFY COLUMN status ENUM('Pending','In Progress','Resolved','Cancelled') NOT NULL DEFAULT 'Pending'");
+        if (Schema::getConnection()->getDriverName() === 'sqlite') {
+            Schema::table('complaints', function (Blueprint $table) {
+                $table->string('status')->default('Pending')->change();
+            });
+        } else {
+            DB::statement("ALTER TABLE complaints MODIFY COLUMN status ENUM('Pending','In Progress','Resolved','Cancelled') NOT NULL DEFAULT 'Pending'");
+        }
     }
 
     public function down(): void
     {
-        DB::statement("ALTER TABLE complaints MODIFY COLUMN status ENUM('Pending','In Progress','Resolved') NOT NULL DEFAULT 'Pending'");
+        DB::table('complaints')->where('status', 'Cancelled')->update(['status' => 'Resolved']);
+
+        if (Schema::getConnection()->getDriverName() === 'sqlite') {
+            Schema::table('complaints', function (Blueprint $table) {
+                $table->string('status')->default('Pending')->change();
+            });
+        } else {
+            DB::statement("ALTER TABLE complaints MODIFY COLUMN status ENUM('Pending','In Progress','Resolved') NOT NULL DEFAULT 'Pending'");
+        }
     }
 };
