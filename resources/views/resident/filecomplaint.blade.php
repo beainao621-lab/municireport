@@ -178,10 +178,11 @@
 <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 
 <aside class="sidebar" id="sidebar">
-    <div class="brand">
-        <div class="brand-icon"><i class="fa-solid fa-landmark" style="font-size:18px;color:#fff;"></i></div>
-        <div><div class="brand-name">MuniciReport</div><div class="brand-sub">Mayor's Office — Victoria</div></div>
-    </div>
+    <div class="brand" style="flex-direction:column; align-items:center; justify-content:center; padding: 16px 20px 14px; border-bottom: 1.5px solid rgba(255,255,255,0.15); display:flex; gap:0;">
+    <img src="{{ asset('images/logo.png') }}" alt="MuniciReport"
+        style="height:90px; width:auto; object-fit:contain; display:block; margin-bottom:2px;">
+    <div style="color:#fff; font-size:12px; font-weight:700; letter-spacing:2px; text-align:center; font-family:'Inter', sans-serif;">MUNICIREPORT</div>
+</div>
     <div class="nav-section">
         <a href="{{ route('resident.complaints.create') }}" class="nav-item active">
             <i class="fa-solid fa-pen-to-square"></i> File a Complaint
@@ -233,10 +234,10 @@
                                 Submit Anonymously
                                 <span class="anon-badge">PRIVATE</span>
                             </div>
-                            <div class="anon-desc">
-                                Kapag pinili ito, <strong>hindi makikita ng admin</strong> ang iyong pangalan, contact number, at account sa listahan ng Citizens.
-                                Maaari ka pa ring mag-track ng iyong complaint sa pamamagitan ng reference number.
-                            </div>
+                           <div class="anon-desc">
+    Your name, contact number, and account will <strong>not be visible to the admin</strong> in the Citizens list.
+    You can still track your complaint using your reference number.
+</div>
                         </div>
                     </div>
                     {{-- Hidden input na isinasama sa form --}}
@@ -377,8 +378,8 @@
 
         // Update success message
         if (isAnonymous) {
-            document.getElementById('successMsg').innerHTML =
-                'Your <strong>anonymous</strong> complaint has been submitted. Track it via your reference number under <strong>My Complaints</strong>.';
+           document.getElementById('successMsg').innerHTML =
+    'Your <strong>anonymous</strong> complaint has been submitted. Track it via your reference number under <strong>My Complaints</strong>.';
         } else {
             document.getElementById('successMsg').innerHTML =
                 'Your complaint has been successfully submitted to the Mayor\'s Office. You can track its status under <strong>My Complaints</strong>.';
@@ -542,25 +543,33 @@
         selectedFiles.forEach(function(file) { formData.append('photos[]', file); });
 
         // Kapag anonymous, palitan ng placeholder values para hindi mag-validate error
-        if (isAnonymous) {
-            formData.set('full_name', 'Anonymous');
-            formData.set('contact_number', '—');
-        }
+       try {
+    var response = await fetch(this.action, {
+        method: 'POST',
+        body: formData,
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    });
 
-        try {
-            var response = await fetch(this.action, { method: 'POST', body: formData, headers: { 'X-Requested-With': 'XMLHttpRequest' } });
-            if (response.redirected || response.ok) {
-                btn.disabled = false; btn.textContent = 'Submit complaint →';
-                clearForm();
-                document.getElementById('successModal').classList.add('show');
-            } else {
-                alert('Something went wrong. Please try again.');
-                btn.disabled = false; btn.textContent = 'Submit complaint →';
-            }
-        } catch (err) {
-            alert('Network error. Please try again.');
-            btn.disabled = false; btn.textContent = 'Submit complaint →';
-        }
+    // Laravel returns 302 redirect on success — fetch follows it and lands on 200
+    // Any 2xx or redirect = success
+    if (response.ok || response.redirected || response.status === 302) {
+        btn.disabled = false;
+        btn.textContent = 'Submit complaint →';
+        clearForm();
+        document.getElementById('successModal').classList.add('show');
+    } else {
+        // Read the actual error from Laravel to help debug
+        var errText = await response.text();
+        console.error('Server error:', response.status, errText);
+        alert('Something went wrong (status ' + response.status + '). Check console for details.');
+        btn.disabled = false;
+        btn.textContent = 'Submit complaint →';
+    }
+} catch (err) {
+    alert('Network error. Please try again.');
+    btn.disabled = false;
+    btn.textContent = 'Submit complaint →';
+}
     });
 </script>
 </body>

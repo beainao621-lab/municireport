@@ -1,5 +1,4 @@
 <?php
-// app/Models/Complaint.php
 
 namespace App\Models;
 
@@ -27,12 +26,14 @@ class Complaint extends Model
         'progress_photos',
         'progress_updates',
         'cancellation_reason',
+        'is_anonymous',
     ];
 
     protected $casts = [
         'photos'           => 'array',
         'progress_photos'  => 'array',
         'progress_updates' => 'array',
+        'is_anonymous'     => 'boolean',
     ];
 
     protected static function booted(): void
@@ -57,7 +58,6 @@ class Complaint extends Model
         return $this->hasMany(ComplaintMessage::class);
     }
 
-    // Comments from residents on progress updates
     public function comments()
     {
         return $this->hasMany(ComplaintComment::class);
@@ -77,5 +77,17 @@ class Complaint extends Model
             ->where('sender_role', 'admin')
             ->where('is_read', false)
             ->count();
+    }
+
+    /**
+     * Returns the display name for admin views.
+     * If the complaint is anonymous, returns "Anonymous".
+     */
+    public function getDisplayName(): string
+    {
+        if ($this->is_anonymous) {
+            return 'Anonymous';
+        }
+        return $this->user->name ?? $this->full_name ?? '—';
     }
 }

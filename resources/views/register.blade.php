@@ -26,8 +26,8 @@
             align-items: center;
             justify-content: center;
             font-family: 'DM Sans', sans-serif;
-            padding: 16px;
-            overflow: hidden;
+            padding: 12px;
+            overflow-y: auto;
         }
 
         body::before {
@@ -62,17 +62,18 @@
             z-index: 1;
             background: rgba(239, 243, 255, 0.97);
             backdrop-filter: blur(32px);
-            border-radius: 28px;
+            border-radius: 24px;
             box-shadow:
                 0 40px 100px rgba(8,81,156,0.35),
                 0 1px 0 rgba(255,255,255,0.7) inset,
                 0 0 0 1px rgba(49,130,189,0.15);
             width: 100%;
-            max-width: 500px;
-            padding: 40px 52px;
+            max-width: 480px;
+            padding: 24px 32px 22px;
             display: flex;
             flex-direction: column;
             animation: slideUp 0.55s cubic-bezier(.22,1,.36,1) both;
+            margin: auto;
         }
 
         @keyframes slideUp {
@@ -82,38 +83,67 @@
 
         .brand {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 18px;
+            margin-bottom: 14px;
         }
-        .brand-icon {
-            width: 46px; height: 46px;
-            background: linear-gradient(135deg, #08519C, #6BAED6);
-            border-radius: 13px;
-            display: flex; align-items: center; justify-content: center;
-            color: white;
-            font-size: 21px;
-            box-shadow: 0 6px 16px rgba(8,81,156,0.4);
+
+        .logo-wrap {
+            position: relative;
+            margin-bottom: 10px;
+        }
+        .logo-glow {
+            position: absolute;
+            inset: -16px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(49,130,189,0.18) 0%, transparent 70%);
+            animation: pulse 3s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.6; }
+        }
+        .logo-ring {
+            position: absolute;
+            inset: -8px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(49,130,189,0.2);
+        }
+        .brand-logo {
+            position: relative;
+            width: 86px; height: 86px;
+            object-fit: contain;
+            filter: drop-shadow(0 6px 18px rgba(8,81,156,0.32)) drop-shadow(0 2px 6px rgba(8,81,156,0.18));
+            display: block;
         }
         .brand-name {
             font-family: 'DM Sans', sans-serif;
-            font-size: 13px;
-            font-weight: 600;
+            font-size: 12px;
+            font-weight: 700;
             color: #08519C;
-            letter-spacing: 2px;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+        .brand-bar {
+            width: 40px;
+            height: 3px;
+            background: linear-gradient(90deg, #08519C, #6BAED6);
+            border-radius: 99px;
+            margin-bottom: 4px;
         }
 
         h2 {
             font-family: 'DM Serif Display', serif;
-            font-size: 28px;
+            font-size: 23px;
             font-weight: 400;
             color: #0a2a4a;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
         .subtitle {
             color: #4a6fa5;
-            font-size: 13.5px;
-            margin-bottom: 20px;
+            font-size: 13px;
+            margin-bottom: 16px;
         }
 
         .alert-error {
@@ -121,42 +151,42 @@
             border: 1px solid #fbb6b6;
             color: #c53030;
             border-radius: 10px;
-            padding: 10px 14px;
-            font-size: 13px;
-            margin-bottom: 14px;
+            padding: 9px 13px;
+            font-size: 12.5px;
+            margin-bottom: 12px;
         }
 
         .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 0 14px;
+            gap: 0 12px;
         }
         .col-full { grid-column: 1 / -1; }
 
-        .field { margin-bottom: 14px; }
+        .field { margin-bottom: 11px; }
         label {
             display: block;
-            font-size: 12.5px;
+            font-size: 11.5px;
             font-weight: 600;
             color: #0a2a4a;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
             letter-spacing: 0.2px;
         }
         .input-wrap { position: relative; }
         .input-wrap svg {
             position: absolute;
-            left: 13px;
+            left: 11px;
             top: 50%;
             transform: translateY(-50%);
             color: #3182BD;
-            width: 15px; height: 15px;
+            width: 14px; height: 14px;
         }
         input {
             width: 100%;
-            padding: 11px 12px 11px 38px;
+            padding: 9px 10px 9px 34px;
             border: 1.5px solid #9ECAE1;
-            border-radius: 11px;
-            font-size: 13.5px;
+            border-radius: 10px;
+            font-size: 13px;
             font-family: 'DM Sans', sans-serif;
             background: rgba(255,255,255,0.88);
             color: #0a2a4a;
@@ -172,32 +202,32 @@
 
         .btn {
             width: 100%;
-            padding: 14px;
+            padding: 12px;
             background: linear-gradient(135deg, #08519C 0%, #3182BD 50%, #6BAED6 100%);
             color: white;
             border: none;
-            border-radius: 12px;
-            font-size: 15px;
+            border-radius: 11px;
+            font-size: 14.5px;
             font-weight: 600;
             font-family: 'DM Sans', sans-serif;
             cursor: pointer;
             transition: opacity .2s, transform .15s, box-shadow .2s;
             letter-spacing: 0.4px;
-            box-shadow: 0 8px 24px rgba(8,81,156,0.45);
-            margin-top: 8px;
+            box-shadow: 0 8px 22px rgba(8,81,156,0.45);
+            margin-top: 6px;
         }
         .btn:hover {
             opacity: 0.9;
             transform: translateY(-2px);
-            box-shadow: 0 14px 32px rgba(8,81,156,0.5);
+            box-shadow: 0 12px 28px rgba(8,81,156,0.5);
         }
         .btn:active { transform: translateY(0); box-shadow: none; }
 
         .divider {
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin: 16px 0;
+            gap: 10px;
+            margin: 12px 0;
             color: #4a6fa5;
             font-size: 12px;
         }
@@ -210,7 +240,7 @@
 
         .footer-link {
             text-align: center;
-            font-size: 13.5px;
+            font-size: 13px;
             color: #4a6fa5;
         }
         .footer-link a {
@@ -220,11 +250,20 @@
         }
         .footer-link a:hover { text-decoration: underline; }
 
-        @media (max-width: 560px) {
-            .card { padding: 28px 20px; }
-            .grid-2 { grid-template-columns: 1fr; }
+        /* Tablet */
+        @media (max-width: 600px) {
+            .card { padding: 20px 20px 18px; border-radius: 20px; }
+            h2 { font-size: 20px; }
+        }
+
+        /* Mobile — single column */
+        @media (max-width: 480px) {
+            body { padding: 10px; }
+            .card { padding: 18px 16px 16px; }
+            .grid-2 { grid-template-columns: 1fr; gap: 0; }
             .col-full { grid-column: 1; }
-            h2 { font-size: 22px; }
+            h2 { font-size: 19px; }
+            .btn { font-size: 14px; padding: 11px; }
         }
     </style>
 </head>
@@ -235,8 +274,13 @@
 
     <div class="card">
         <div class="brand">
-            <div class="brand-icon">🏛</div>
-            <span class="brand-name">MUNICIREPORT</span>
+            <div class="logo-wrap">
+                <div class="logo-glow"></div>
+                <div class="logo-ring"></div>
+                <img src="{{ asset('images/logo.png') }}" alt="MuniciReport" class="brand-logo">
+            </div>
+            <span class="brand-name">MuniciReport</span>
+            <div class="brand-bar"></div>
         </div>
 
         <h2>Create account</h2>

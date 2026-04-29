@@ -17,9 +17,12 @@ class ResidentController extends Controller
 
     public function storeComplaint(Request $request)
     {
+        $isAnonymous = $request->boolean('is_anonymous');
+
+        // If anonymous, name and contact are not required
         $request->validate([
-            'full_name'      => 'required|string|max:255',
-            'contact_number' => 'required|string|max:20',
+            'full_name'      => $isAnonymous ? 'nullable|string|max:255' : 'required|string|max:255',
+            'contact_number' => $isAnonymous ? 'nullable|string|max:20'  : 'required|string|max:20',
             'category'       => 'required|string',
             'location'       => 'required|string|max:255',
             'description'    => 'required|string',
@@ -39,8 +42,10 @@ class ResidentController extends Controller
 
         $complaint = Complaint::create([
             'user_id'        => Auth::id(),
-            'full_name'      => $request->full_name,
-            'contact_number' => $request->contact_number,
+            // If anonymous, store null so admin cannot see the real name
+            'full_name'      => $isAnonymous ? null : $request->full_name,
+            'contact_number' => $isAnonymous ? null : $request->contact_number,
+            'is_anonymous'   => $isAnonymous,
             'category'       => $request->category,
             'location'       => $request->location,
             'description'    => $request->description,
@@ -57,8 +62,8 @@ class ResidentController extends Controller
     public function myComplaints()
     {
         $complaints = Complaint::where('user_id', Auth::id())
-            ->latest()        // newest first
-            ->paginate(10);   // paginated, not scrollable
+            ->latest()
+            ->paginate(10);
 
         return view('resident.mycomplaints', compact('complaints'));
     }

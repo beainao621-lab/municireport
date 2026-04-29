@@ -196,13 +196,15 @@ class AdminController extends Controller
         }
     }
 
-  public function citizens(Request $request)
+public function citizens(Request $request)
 {
     $search = $request->input('search');
- 
+
     $citizens = \App\Models\User::where('role', 'resident')
-        // ← BAGONG RULE: Ipakita lang ang mga may kahit isang complaint
-        ->whereHas('complaints')
+        // Only show residents who have at least one non-anonymous complaint
+        ->whereHas('complaints', function ($q) {
+            $q->where('is_anonymous', false);
+        })
         ->when($search, function ($q) use ($search) {
             $q->where(function ($inner) use ($search) {
                 $inner->where('name', 'like', "%{$search}%")
@@ -210,17 +212,20 @@ class AdminController extends Controller
                       ->orWhere('phone', 'like', "%{$search}%");
             });
         })
-        ->withCount('complaints')
+        // Count only non-anonymous complaints
+        ->withCount(['complaints as complaints_count' => function ($q) {
+            $q->where('is_anonymous', false);
+        }])
+        // Load only non-anonymous complaints for the first-report date
         ->with(['complaints' => function ($q) {
-            $q->orderBy('created_at', 'asc');
+            $q->where('is_anonymous', false)->orderBy('created_at', 'asc');
         }])
         ->orderByDesc('created_at')
         ->paginate(20)
         ->withQueryString();
- 
+
     return view('admin.citizens', compact('citizens'));
 }
- 
 
     public function storeCitizen(Request $request)
     {

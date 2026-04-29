@@ -4,249 +4,269 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login – MuniciReport</title>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-        :root {
-            --deep:       #08519C;
-            --mid:        #3182BD;
-            --teal:       #6BAED6;
-            --light-teal: #9ECAE1;
-            --pale:       #C6DBEF;
-            --very-pale:  #EFF3FF;
-            --text-dark:  #0a2a4a;
-            --text-muted: #4a6fa5;
-            --card-w:     500px;
-            --card-h:     580px;
-        }
-
         body {
             min-height: 100vh;
-            background: linear-gradient(145deg, #03264d 0%, #08519C 25%, #3182BD 55%, #6BAED6 80%, #9ECAE1 100%);
+            background: linear-gradient(145deg, #03264d 0%, #08519C 30%, #2b7bbf 60%, #5aaee0 85%, #8ecfee 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: 'DM Sans', sans-serif;
+            font-family: 'Outfit', sans-serif;
             padding: 16px;
             position: relative;
             overflow: hidden;
         }
 
-        body::before {
-            content: '';
-            position: fixed;
-            width: 700px; height: 700px;
-            background: radial-gradient(circle, rgba(158,202,225,0.18) 0%, transparent 65%);
-            top: -200px; right: -200px;
-            pointer-events: none;
-        }
-        body::after {
-            content: '';
-            position: fixed;
-            width: 500px; height: 500px;
-            background: radial-gradient(circle, rgba(3,38,77,0.6) 0%, transparent 70%);
-            bottom: -120px; left: -120px;
-            pointer-events: none;
-        }
-
-        .deco {
+        .bg-circle {
             position: fixed;
             border-radius: 50%;
             pointer-events: none;
-            border: 1px solid rgba(158,202,225,0.15);
         }
-        .deco-1 { width: 300px; height: 300px; top: 5%; right: 8%; }
-        .deco-2 { width: 180px; height: 180px; top: 20%; right: 18%; }
-        .deco-3 { width: 220px; height: 220px; bottom: 10%; left: 5%; }
+        .bg-c1 {
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(107,174,214,0.2) 0%, transparent 70%);
+            top: -150px; right: -150px;
+        }
+        .bg-c2 {
+            width: 450px; height: 450px;
+            background: radial-gradient(circle, rgba(3,38,77,0.55) 0%, transparent 70%);
+            bottom: -100px; left: -100px;
+        }
+        .bg-c3 {
+            width: 250px; height: 250px;
+            border: 1px solid rgba(158,202,225,0.18);
+            top: 8%; right: 10%;
+        }
+        .bg-c4 {
+            width: 140px; height: 140px;
+            border: 1px solid rgba(158,202,225,0.12);
+            top: 22%; right: 20%;
+        }
 
         .card {
             position: relative;
-            z-index: 1;
-            background: rgba(239, 243, 255, 0.97);
-            backdrop-filter: blur(32px);
+            z-index: 2;
+            width: 100%;
+            max-width: 440px;
+            background: linear-gradient(160deg, rgba(255,255,255,0.98) 0%, rgba(235,244,255,0.97) 100%);
             border-radius: 28px;
             box-shadow:
-                0 40px 100px rgba(8,81,156,0.35),
-                0 1px 0 rgba(255,255,255,0.7) inset,
-                0 0 0 1px rgba(49,130,189,0.15);
-            width: 100%;
-            max-width: var(--card-w);
-            height: var(--card-h);
-            padding: 0 52px;
+                0 40px 100px rgba(3,38,77,0.45),
+                0 2px 0 rgba(255,255,255,0.9) inset,
+                0 0 0 1px rgba(49,130,189,0.12);
+            padding: 28px 36px 26px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            overflow: hidden;
-            animation: slideUp 0.55s cubic-bezier(.22,1,.36,1) both;
+            align-items: center;
+            animation: rise 0.6s cubic-bezier(.22,1,.36,1) both;
         }
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px) scale(0.98); }
+        @keyframes rise {
+            from { opacity: 0; transform: translateY(36px) scale(0.97); }
             to   { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 24px;
+        .logo-wrap {
+            position: relative;
+            margin-bottom: 10px;
         }
-        .brand-icon {
-            width: 46px; height: 46px;
-            background: linear-gradient(135deg, #08519C, #6BAED6);
-            border-radius: 13px;
-            display: flex; align-items: center; justify-content: center;
-            color: white;
-            font-size: 21px;
-            box-shadow: 0 6px 16px rgba(8,81,156,0.4);
+
+        .logo-glow {
+            position: absolute;
+            inset: -16px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(49,130,189,0.18) 0%, transparent 70%);
+            animation: pulse 3s ease-in-out infinite;
         }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.6; }
+        }
+
+        .logo-ring {
+            position: absolute;
+            inset: -8px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(49,130,189,0.2);
+        }
+
+        .brand-logo {
+            position: relative;
+            width: 90px;
+            height: 90px;
+            object-fit: contain;
+            filter: drop-shadow(0 6px 18px rgba(8,81,156,0.32)) drop-shadow(0 2px 6px rgba(8,81,156,0.18));
+            display: block;
+        }
+
         .brand-name {
-            font-family: 'DM Sans', sans-serif;
-            font-size: 13px;
-            font-weight: 600;
+            font-family: 'Outfit', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
             color: #08519C;
-            letter-spacing: 2px;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .brand-bar {
+            width: 40px;
+            height: 3px;
+            background: linear-gradient(90deg, #08519C, #6BAED6);
+            border-radius: 99px;
+            margin-bottom: 16px;
         }
 
         h2 {
-            font-family: 'DM Serif Display', serif;
-            font-size: 34px;
-            font-weight: 400;
+            font-family: 'Playfair Display', serif;
+            font-size: 26px;
+            font-weight: 700;
             color: #0a2a4a;
-            margin-bottom: 6px;
-            line-height: 1.15;
+            margin-bottom: 4px;
+            text-align: center;
         }
         .subtitle {
-            color: #4a6fa5;
-            font-size: 15px;
-            margin-bottom: 20px;
+            color: #5a7fa8;
+            font-size: 13px;
             font-weight: 400;
+            text-align: center;
+            margin-bottom: 20px;
         }
 
-        .card:has(.alert-error) .brand,
-        .card:has(.alert-success) .brand { margin-bottom: 16px; }
-        .card:has(.alert-error) h2,
-        .card:has(.alert-success) h2 { margin-bottom: 4px; }
-        .card:has(.alert-error) .subtitle,
-        .card:has(.alert-success) .subtitle { margin-bottom: 14px; }
-        .card:has(.alert-error) .field,
-        .card:has(.alert-success) .field { margin-bottom: 14px; }
-        .card:has(.alert-error) .forgot,
-        .card:has(.alert-success) .forgot { margin-top: -8px; margin-bottom: 18px; }
-        .card:has(.alert-error) .divider,
-        .card:has(.alert-success) .divider { margin: 16px 0; }
+        form { width: 100%; }
 
         .alert-error {
             background: #fff5f5;
             border: 1px solid #fbb6b6;
             color: #c53030;
             border-radius: 10px;
-            padding: 11px 15px;
+            padding: 10px 14px;
             font-size: 13px;
-            margin-bottom: 20px;
+            margin-bottom: 14px;
+            width: 100%;
         }
         .alert-success {
             background: #e8f4fd;
             border: 1px solid #9ECAE1;
             color: #08519C;
             border-radius: 10px;
-            padding: 11px 15px;
+            padding: 10px 14px;
             font-size: 13px;
-            margin-bottom: 20px;
+            margin-bottom: 14px;
+            width: 100%;
         }
 
-        .field { margin-bottom: 20px; }
+        .field { margin-bottom: 14px; }
+
         label {
             display: block;
-            font-size: 13px;
-            font-weight: 600;
-            color: #0a2a4a;
-            margin-bottom: 7px;
-            letter-spacing: 0.2px;
+            font-size: 10.5px;
+            font-weight: 700;
+            color: #3a5f85;
+            margin-bottom: 6px;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
         }
+
         .input-wrap { position: relative; }
+
         .input-wrap svg {
             position: absolute;
-            left: 15px;
+            left: 14px;
             top: 50%;
             transform: translateY(-50%);
-            color: #3182BD;
-            width: 17px; height: 17px;
+            color: #5a9fd4;
+            width: 16px; height: 16px;
+            pointer-events: none;
         }
+
         input {
             width: 100%;
-            padding: 14px 15px 14px 44px;
-            border: 1.5px solid #9ECAE1;
+            padding: 11px 14px 11px 42px;
+            border: 1.5px solid #d0e4f4;
             border-radius: 12px;
-            font-size: 14.5px;
-            font-family: 'DM Sans', sans-serif;
-            background: rgba(255,255,255,0.88);
+            font-size: 14px;
+            font-family: 'Outfit', sans-serif;
+            background: rgba(255,255,255,0.85);
             color: #0a2a4a;
-            transition: border-color .2s, box-shadow .2s, background .2s;
+            transition: border-color .25s, box-shadow .25s, background .25s;
             outline: none;
         }
         input:focus {
             border-color: #3182BD;
-            box-shadow: 0 0 0 3px rgba(49,130,189,0.15);
-            background: white;
+            box-shadow: 0 0 0 4px rgba(49,130,189,0.12);
+            background: #fff;
         }
-        input::placeholder { color: #9ECAE1; }
+        input::placeholder { color: #aec8de; }
 
         .forgot {
             text-align: right;
-            margin-top: -14px;
-            margin-bottom: 26px;
+            margin-top: -8px;
+            margin-bottom: 18px;
         }
         .forgot a {
             color: #3182BD;
-            font-size: 13px;
-            text-decoration: none;
+            font-size: 12.5px;
             font-weight: 600;
+            text-decoration: none;
         }
         .forgot a:hover { text-decoration: underline; }
 
         .btn {
             width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #08519C 0%, #3182BD 50%, #6BAED6 100%);
+            padding: 13px;
+            background: linear-gradient(135deg, #063f7a 0%, #08519C 35%, #3182BD 70%, #6BAED6 100%);
             color: white;
             border: none;
             border-radius: 12px;
-            font-size: 15.5px;
+            font-size: 15px;
             font-weight: 600;
-            font-family: 'DM Sans', sans-serif;
+            font-family: 'Outfit', sans-serif;
             cursor: pointer;
-            transition: opacity .2s, transform .15s, box-shadow .2s;
-            letter-spacing: 0.4px;
-            box-shadow: 0 8px 24px rgba(8,81,156,0.45);
+            letter-spacing: 0.8px;
+            box-shadow: 0 8px 24px rgba(8,81,156,0.45), 0 1px 0 rgba(255,255,255,0.15) inset;
+            transition: transform .18s, box-shadow .18s;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, transparent 60%);
+            pointer-events: none;
         }
         .btn:hover {
-            opacity: 0.9;
             transform: translateY(-2px);
             box-shadow: 0 14px 32px rgba(8,81,156,0.5);
         }
-        .btn:active { transform: translateY(0); box-shadow: none; }
+        .btn:active { transform: translateY(0); box-shadow: 0 6px 16px rgba(8,81,156,0.35); }
 
         .divider {
             display: flex;
             align-items: center;
             gap: 12px;
-            margin: 24px 0;
-            color: #4a6fa5;
+            margin: 16px 0;
+            color: #8aafc8;
             font-size: 12px;
+            font-weight: 500;
+            width: 100%;
         }
         .divider::before, .divider::after {
             content: '';
             flex: 1;
             height: 1px;
-            background: #9ECAE1;
+            background: #d4e6f4;
         }
 
         .footer-link {
             text-align: center;
-            font-size: 14px;
-            color: #4a6fa5;
+            font-size: 13.5px;
+            color: #5a7fa8;
         }
         .footer-link a {
             color: #08519C;
@@ -255,22 +275,29 @@
         }
         .footer-link a:hover { text-decoration: underline; }
 
-        @media (max-width: 560px) {
-            .card { height: auto; padding: 36px 24px; }
-            h2 { font-size: 28px; }
+        @media (max-width: 520px) {
+            .card { padding: 22px 18px 20px; border-radius: 20px; }
+            .brand-logo { width: 76px; height: 76px; }
+            h2 { font-size: 22px; }
         }
     </style>
 </head>
 <body>
-    <div class="deco deco-1"></div>
-    <div class="deco deco-2"></div>
-    <div class="deco deco-3"></div>
+    <div class="bg-circle bg-c1"></div>
+    <div class="bg-circle bg-c2"></div>
+    <div class="bg-circle bg-c3"></div>
+    <div class="bg-circle bg-c4"></div>
 
     <div class="card">
-        <div class="brand">
-            <div class="brand-icon">🏛</div>
-            <span class="brand-name">MUNICIREPORT</span>
+
+        <div class="logo-wrap">
+            <div class="logo-glow"></div>
+            <div class="logo-ring"></div>
+            <img src="{{ asset('images/logo.png') }}" alt="MuniciReport" class="brand-logo">
         </div>
+
+        <span class="brand-name">MuniciReport</span>
+        <div class="brand-bar"></div>
 
         <h2>Welcome back</h2>
         <p class="subtitle">Sign in to your account to continue</p>
@@ -284,11 +311,12 @@
 
         <form method="POST" action="/login">
             @csrf
+
             <div class="field">
                 <label>Email Address</label>
                 <div class="input-wrap">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                    <input type="email" name="email" placeholder="you@example.com" autocomplete="off" required>
+                    <input type="email" name="email" placeholder="you@example.com" autocomplete="off" required value="{{ old('email') }}">
                 </div>
             </div>
 
@@ -306,6 +334,7 @@
 
         <div class="divider">or</div>
         <p class="footer-link">Don't have an account? <a href="/register">Create one</a></p>
+
     </div>
 </body>
 </html>

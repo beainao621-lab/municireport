@@ -52,7 +52,6 @@
         html, body { height: 100%; overflow-x: hidden; }
         body { font-family: 'Inter', sans-serif; background: var(--bg-page); color: var(--text-primary); display: flex; min-height: 100vh; }
 
-        /* ── Sidebar ── */
         .sidebar { width: var(--sidebar-w); background: #08519C; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 200; transition: transform .28s cubic-bezier(.4,0,.2,1); }
         .brand { display: flex; align-items: center; gap: 11px; padding: 22px 20px 18px; border-bottom: 1.5px solid rgba(255,255,255,0.15); }
         .brand-icon { width: 40px; height: 40px; background: linear-gradient(135deg,#3182BD,#9ECAE1); border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 19px; flex-shrink: 0; }
@@ -66,14 +65,12 @@
         .overlay { display: none; position: fixed; inset: 0; background: rgba(8,81,156,0.4); z-index: 150; }
         .overlay.show { display: block; }
 
-        /* ── Main ── */
         .main { margin-left: var(--sidebar-w); width: calc(100% - var(--sidebar-w)); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
         .content { flex: 1; padding: 28px 32px; }
 
         .page-title { font-size: 26px; font-weight: 700; letter-spacing: -0.4px; color: var(--text-primary); margin-bottom: 4px; }
         .page-sub   { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; }
 
-        /* ── Filter bar ── */
         .filter-bar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
         .search-wrap { position: relative; flex: 1; min-width: 180px; }
         .search-wrap i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--brand-pale); font-size: 13px; }
@@ -83,7 +80,6 @@
         .filter-select { padding: 10px 34px 10px 12px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13.5px; font-family: 'Inter', sans-serif; background: var(--bg-surface); color: var(--text-primary); outline: none; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%234a6fa5' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; }
         .filter-btn { padding: 10px 20px; background: linear-gradient(135deg,#08519C,#3182BD); color: white; border: none; border-radius: 10px; font-size: 13.5px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; white-space: nowrap; }
 
-        /* ── Table ── */
         .table-card { background: var(--bg-surface); border: 1.5px solid var(--border); border-radius: 14px; overflow: hidden; overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; min-width: 700px; }
         thead th { padding: 13px 16px; text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); background: var(--bg-raised); border-bottom: 1.5px solid var(--border); white-space: nowrap; }
@@ -100,9 +96,14 @@
         .badge-resolved  { background: var(--color-green-bg);  color: var(--color-green); }
         .badge-cancelled { background: var(--color-red-bg);    color: var(--color-red); }
 
+        /* Anonymous badge */
+        .badge-anon { font-size: 11px; font-weight: 600; border-radius: 999px; padding: 3px 9px; background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; display: inline-flex; align-items: center; gap: 4px; }
+        @media (prefers-color-scheme: dark) {
+            .badge-anon { background: rgba(255,255,255,0.07); color: #94a3b8; border-color: rgba(255,255,255,0.1); }
+        }
+
         .date-cell { font-size: 12px; color: var(--text-muted); white-space: nowrap; }
 
-        /* ── Buttons ── */
         .btn-sm { padding: 6px 12px; border: 1.5px solid var(--border); border-radius: 7px; background: var(--bg-surface); color: var(--text-muted); font-size: 12px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; transition: all .15s; margin-right: 4px; white-space: nowrap; display: inline-flex; align-items: center; gap: 5px; }
         .btn-sm:hover { background: var(--bg-raised); border-color: var(--brand-teal); color: var(--brand-mid); }
         .btn-sm.primary { background: linear-gradient(135deg,#08519C,#3182BD); color: white; border-color: transparent; }
@@ -116,88 +117,21 @@
 
         .alert-success { background: var(--color-blue-bg); border: 1.5px solid var(--border); color: var(--brand-mid); border-radius: 10px; padding: 12px 16px; font-size: 13.5px; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
 
-        /* ══════════════════════════════════════════════
-           PAGINATION — responsive, matches mycomplaints
-        ══════════════════════════════════════════════ */
-        .pagination-meta-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-            padding: 12px 16px;
-            border-top: 1.5px solid var(--border);
-        }
+        .pagination-meta-bar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; padding: 12px 16px; border-top: 1.5px solid var(--border); }
         .pagination-meta-info { font-size: 13px; color: var(--text-muted); }
         .per-page-wrap { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-muted); }
-        .per-page-wrap select {
-            padding: 6px 28px 6px 10px;
-            border: 1.5px solid var(--border);
-            border-radius: 8px;
-            font-size: 13px;
-            font-family: 'Inter',sans-serif;
-            background: var(--bg-surface);
-            color: var(--text-primary);
-            outline: none;
-            cursor: pointer;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%234a6fa5' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 8px center;
-        }
-        .pagination-wrap {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 10px 0 16px;
-        }
+        .per-page-wrap select { padding: 6px 28px 6px 10px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 13px; font-family: 'Inter',sans-serif; background: var(--bg-surface); color: var(--text-primary); outline: none; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%234a6fa5' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 8px center; }
+        .pagination-wrap { display: flex; justify-content: center; align-items: center; padding: 10px 0 16px; }
         .pagination-wrap nav > div:first-child { display: none !important; }
-        .pagination-wrap nav > div:last-child,
-        .pagination-wrap nav > div { display: flex !important; align-items: center; gap: 4px; }
+        .pagination-wrap nav > div:last-child, .pagination-wrap nav > div { display: flex !important; align-items: center; gap: 4px; }
         .pagination-wrap nav span.relative { display: flex; align-items: center; gap: 4px; }
-        .pagination-wrap nav a,
-        .pagination-wrap nav span[aria-current="page"] > span,
-        .pagination-wrap nav span[aria-disabled="true"] > span {
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            min-width: 34px;
-            height: 34px;
-            padding: 0 8px;
-            border: 1.5px solid var(--border);
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 600;
-            font-family: 'Inter', sans-serif;
-            text-decoration: none;
-            color: var(--text-muted);
-            background: var(--bg-surface);
-            transition: all .15s;
-            line-height: 1;
-        }
-        .pagination-wrap nav a:hover {
-            background: var(--bg-raised);
-            border-color: var(--brand-teal);
-            color: var(--brand-mid);
-        }
-        .pagination-wrap nav span[aria-current="page"] > span {
-            background: linear-gradient(135deg, #08519C, #3182BD) !important;
-            color: #fff !important;
-            border-color: transparent !important;
-            font-weight: 700;
-        }
-        .pagination-wrap nav span[aria-disabled="true"] > span {
-            opacity: .38;
-            cursor: not-allowed;
-        }
-        .pagination-wrap nav svg {
-            width: 14px !important;
-            height: 14px !important;
-            display: block;
-        }
+        .pagination-wrap nav a, .pagination-wrap nav span[aria-current="page"] > span, .pagination-wrap nav span[aria-disabled="true"] > span { display: inline-flex !important; align-items: center !important; justify-content: center !important; min-width: 34px; height: 34px; padding: 0 8px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 13px; font-weight: 600; font-family: 'Inter', sans-serif; text-decoration: none; color: var(--text-muted); background: var(--bg-surface); transition: all .15s; line-height: 1; }
+        .pagination-wrap nav a:hover { background: var(--bg-raised); border-color: var(--brand-teal); color: var(--brand-mid); }
+        .pagination-wrap nav span[aria-current="page"] > span { background: linear-gradient(135deg, #08519C, #3182BD) !important; color: #fff !important; border-color: transparent !important; font-weight: 700; }
+        .pagination-wrap nav span[aria-disabled="true"] > span { opacity: .38; cursor: not-allowed; }
+        .pagination-wrap nav svg { width: 14px !important; height: 14px !important; display: block; }
         .pagination-wrap nav .flex.justify-between { display: none !important; }
 
-        /* ── Description Modal ── */
         .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(8,81,156,0.45); z-index: 400; align-items: center; justify-content: center; padding: 16px; }
         .modal-overlay.show { display: flex; }
         .modal-box { background: var(--bg-surface); border-radius: 18px; padding: 28px; width: 100%; max-width: 500px; max-height: 85vh; display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(0,0,0,0.35); border: 1.5px solid var(--border); }
@@ -207,7 +141,6 @@
         .modal-close-btn { padding: 10px 22px; border: 1.5px solid var(--border); border-radius: 9px; background: var(--bg-surface); color: var(--text-muted); font-size: 13.5px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; align-self: flex-end; }
         .modal-close-btn:hover { background: var(--bg-raised); }
 
-        /* ── Update Modal ── */
         .update-overlay { display: none; position: fixed; inset: 0; background: rgba(8,81,156,0.5); z-index: 500; align-items: center; justify-content: center; padding: 16px; }
         .update-overlay.show { display: flex; }
         .update-modal { background: var(--bg-surface); border-radius: 18px; padding: 28px; width: 100%; max-width: 580px; box-shadow: 0 24px 70px rgba(0,0,0,0.4); max-height: 92vh; overflow-y: auto; border: 1.5px solid var(--border); }
@@ -262,7 +195,6 @@
         .btn-save-m { flex: 2; padding: 12px; border: none; border-radius: 9px; background: linear-gradient(135deg,#08519C,#3182BD,#6BAED6); color: white; font-size: 13.5px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; }
         .btn-save-m:disabled { opacity: .6; cursor: not-allowed; }
 
-        /* ── Save confirm modal ── */
         .save-confirm-overlay { display: none; position: fixed; inset: 0; background: rgba(8,81,156,0.55); z-index: 700; align-items: center; justify-content: center; padding: 16px; }
         .save-confirm-overlay.show { display: flex; }
         .save-confirm-box { background: var(--bg-surface); border-radius: 18px; padding: 32px; width: 100%; max-width: 380px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.4); border: 1.5px solid var(--border); }
@@ -273,7 +205,6 @@
         .sc-cancel  { flex: 1; padding: 12px; border: 1.5px solid var(--border); border-radius: 9px; background: var(--bg-surface); color: var(--text-muted); font-size: 14px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; }
         .sc-confirm { flex: 1; padding: 12px; border: none; border-radius: 9px; background: linear-gradient(135deg,#08519C,#3182BD); color: white; font-size: 14px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; }
 
-        /* ── Delete confirm modal ── */
         .delete-confirm-overlay { display: none; position: fixed; inset: 0; background: rgba(8,81,156,0.55); z-index: 800; align-items: center; justify-content: center; padding: 16px; }
         .delete-confirm-overlay.show { display: flex; }
         .delete-confirm-box { background: var(--bg-surface); border-radius: 18px; padding: 32px; width: 100%; max-width: 380px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.4); border: 1.5px solid var(--border); }
@@ -284,7 +215,6 @@
         .dc-cancel  { flex: 1; padding: 12px; border: 1.5px solid var(--border); border-radius: 9px; background: var(--bg-surface); color: var(--text-muted); font-size: 14px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; }
         .dc-confirm { flex: 1; padding: 12px; border: none; border-radius: 9px; background: linear-gradient(135deg,#ef4444,#dc2626); color: white; font-size: 14px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; }
 
-        /* ── Chat Modal ── */
         .chat-overlay { display: none; position: fixed; inset: 0; background: rgba(8,81,156,0.5); z-index: 600; align-items: center; justify-content: center; padding: 16px; }
         .chat-overlay.show { display: flex; }
         .chat-modal { background: var(--bg-surface); border-radius: 18px; width: 100%; max-width: 520px; height: 580px; display: flex; flex-direction: column; box-shadow: 0 24px 70px rgba(0,0,0,0.4); border: 1.5px solid var(--border); overflow: hidden; }
@@ -309,7 +239,6 @@
         .chat-send-btn { padding: 10px 18px; background: linear-gradient(135deg,#08519C,#3182BD); color: white; border: none; border-radius: 10px; font-size: 13.5px; font-weight: 600; font-family: 'Inter',sans-serif; cursor: pointer; align-self: flex-end; }
         .chat-send-btn:disabled { opacity: .6; cursor: not-allowed; }
 
-        /* ── Lightbox ── */
         .lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 900; align-items: center; justify-content: center; }
         .lightbox.show { display: flex; }
         .lightbox img { max-width: 88vw; max-height: 85vh; border-radius: 10px; object-fit: contain; }
@@ -332,10 +261,11 @@
 <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 
 <aside class="sidebar" id="sidebar">
-    <div class="brand">
-        <div class="brand-icon"><i class="fa-solid fa-landmark" style="font-size:18px;color:#fff;"></i></div>
-        <div><div class="brand-name">MuniciReport</div><div class="brand-sub">Admin Panel</div></div>
-    </div>
+    <div class="brand" style="flex-direction:column; align-items:center; justify-content:center; padding: 16px 20px 14px; border-bottom: 1.5px solid rgba(255,255,255,0.15); display:flex; gap:0;">
+    <img src="{{ asset('images/logo.png') }}" alt="MuniciReport"
+        style="height:90px; width:auto; object-fit:contain; display:block; margin-bottom:2px;">
+    <div style="color:#fff; font-size:12px; font-weight:700; letter-spacing:2px; text-align:center; font-family:'Inter', sans-serif;">MUNICIREPORT</div>
+</div>
     <div class="nav-section">
         <a href="{{ route('admin.dashboard') }}"  class="nav-item"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
         <a href="{{ route('admin.complaints') }}"  class="nav-item active"><i class="fa-solid fa-clipboard-list"></i> Complaints</a>
@@ -357,7 +287,6 @@
             <div class="alert-success"><i class="fa-solid fa-circle-check"></i> {{ session('success') }}</div>
         @endif
 
-        {{-- Filter form --}}
         <form method="GET" action="{{ route('admin.complaints') }}" id="filterForm">
             <input type="hidden" name="per_page" value="{{ $perPage }}">
             <div class="filter-bar">
@@ -381,7 +310,6 @@
             </div>
         </form>
 
-        {{-- Hidden data elements for JS --}}
         @foreach($complaints as $c)
             <div class="complaint-data" style="display:none;"
                 data-id="{{ $c->id }}"
@@ -393,7 +321,8 @@
                 data-remarks="{{ $c->remarks ?? '' }}"
                 data-cancel-reason="{{ $c->cancellation_reason ?? '' }}"
                 data-snippet="{{ Str::limit($c->description, 50) }} · {{ $c->location }}"
-                data-citizen="{{ $c->user->name ?? $c->full_name }}"
+                data-citizen="{{ $c->getDisplayName() }}"
+                data-anonymous="{{ $c->is_anonymous ? '1' : '0' }}"
                 data-photos="{{ json_encode(collect($c->photos ?? [])->map(fn($p) => asset('storage/' . $p))->values()) }}"
                 data-updates="{{ json_encode(collect($c->progress_updates ?? [])->map(function($u) {
                     $u['photos'] = collect($u['photos'] ?? [])->map(fn($p) => asset('storage/' . $p))->values()->toArray();
@@ -402,7 +331,6 @@
             </div>
         @endforeach
 
-        {{-- Table --}}
         <div class="table-card">
             <table>
                 <thead>
@@ -421,7 +349,13 @@
                     @forelse($complaints as $c)
                     <tr>
                         <td><span class="ref">{{ $c->reference_number }}</span></td>
-                        <td style="font-weight:600;">{{ $c->user->name ?? $c->full_name }}</td>
+                        <td>
+                            @if($c->is_anonymous)
+                                <span class="badge-anon"><i class="fa-solid fa-user-secret"></i> Anonymous</span>
+                            @else
+                                <span style="font-weight:600;">{{ $c->getDisplayName() }}</span>
+                            @endif
+                        </td>
                         <td>{{ $c->category }}</td>
                         <td>
                             <button class="btn-sm btn-view-desc" data-id="{{ $c->id }}">
@@ -429,20 +363,23 @@
                             </button>
                         </td>
                         <td>
-                            @php
-                                $unreadForThis = \App\Models\ComplaintMessage::where('complaint_id', $c->id)
-                                    ->where('sender_role', 'resident')
-                                    ->where('is_read', false)
-                                    ->count();
-                            @endphp
-                            <button class="btn-sm msg-btn btn-open-chat"
-                                data-id="{{ $c->id }}"
-                                data-ref="{{ $c->reference_number }}"
-                                data-name="{{ $c->user->name ?? $c->full_name }}">
-                                <i class="fa-solid fa-comments"></i> Message
-                                <span class="msg-unread-badge" id="msgbadge-{{ $c->id }}"
-                                    style="{{ $unreadForThis > 0 ? '' : 'display:none;' }}">{{ $unreadForThis }}</span>
-                            </button>
+                         @php
+    $unreadForThis = \App\Models\ComplaintMessage::where('complaint_id', $c->id)
+        ->where('sender_role', 'resident')
+        ->where('is_read', false)
+        ->count();
+@endphp
+<button class="btn-sm msg-btn btn-open-chat"
+    data-id="{{ $c->id }}"
+    data-ref="{{ $c->reference_number }}"
+    data-name="{{ $c->is_anonymous ? 'Anonymous (' . $c->reference_number . ')' : ($c->user->name ?? $c->full_name) }}">
+    <i class="fa-solid fa-comments"></i> Message
+    @if($c->is_anonymous)
+        <span style="font-size:10px;color:var(--text-muted);font-style:italic;"></span>
+    @endif
+    <span class="msg-unread-badge" id="msgbadge-{{ $c->id }}"
+        style="{{ $unreadForThis > 0 ? '' : 'display:none;' }}">{{ $unreadForThis }}</span>
+</button>
                         </td>
                         <td>
                             @php
@@ -480,7 +417,6 @@
                 </tbody>
             </table>
 
-            {{-- Pagination with meta bar --}}
             @if($complaints->hasPages())
             <div class="pagination-meta-bar">
                 <div class="pagination-meta-info">
@@ -517,9 +453,7 @@
     </div>
 </div>
 
-{{-- ══════════════════════════════════════════════════════════
-     DESCRIPTION MODAL
-══════════════════════════════════════════════════════════ --}}
+{{-- DESCRIPTION MODAL --}}
 <div class="modal-overlay" id="descModal">
     <div class="modal-box">
         <h3 id="desc-ref"></h3>
@@ -530,9 +464,7 @@
     </div>
 </div>
 
-{{-- ══════════════════════════════════════════════════════════
-     UPDATE MODAL
-══════════════════════════════════════════════════════════ --}}
+{{-- UPDATE MODAL --}}
 <div class="update-overlay" id="updateOverlay">
     <div class="update-modal">
         <h2 id="upd-title">Update Complaint</h2>
@@ -618,9 +550,7 @@
     </div>
 </div>
 
-{{-- ══════════════════════════════════════════════════════════
-     SAVE CONFIRM MODAL
-══════════════════════════════════════════════════════════ --}}
+{{-- SAVE CONFIRM MODAL --}}
 <div class="save-confirm-overlay" id="saveConfirmOverlay">
     <div class="save-confirm-box">
         <div class="sc-icon"><i class="fa-solid fa-floppy-disk"></i></div>
@@ -633,9 +563,7 @@
     </div>
 </div>
 
-{{-- ══════════════════════════════════════════════════════════
-     DELETE CONFIRM MODAL
-══════════════════════════════════════════════════════════ --}}
+{{-- DELETE CONFIRM MODAL --}}
 <div class="delete-confirm-overlay" id="deleteConfirmOverlay">
     <div class="delete-confirm-box">
         <div class="dc-icon"><i class="fa-solid fa-trash"></i></div>
@@ -648,9 +576,7 @@
     </div>
 </div>
 
-{{-- ══════════════════════════════════════════════════════════
-     CHAT MODAL
-══════════════════════════════════════════════════════════ --}}
+{{-- CHAT MODAL --}}
 <div class="chat-overlay" id="chatOverlay">
     <div class="chat-modal">
         <div class="chat-modal-header">
@@ -673,9 +599,7 @@
     </div>
 </div>
 
-{{-- ══════════════════════════════════════════════════════════
-     LIGHTBOX
-══════════════════════════════════════════════════════════ --}}
+{{-- LIGHTBOX --}}
 <div class="lightbox" id="lightbox">
     <button class="lightbox-close" onclick="closeLightbox()">×</button>
     <button class="lightbox-nav lightbox-prev" onclick="lightboxNav(-1)"><i class="fa-solid fa-chevron-left"></i></button>
@@ -697,18 +621,15 @@
     var chatPollTimer = null;
     var pendingDeleteId = null;
 
-    /* ── Per-page change ─────────────────────────────── */
     function changePerPage(val) {
         var form = document.getElementById('filterForm');
         form.querySelector('[name="per_page"]').value = val;
         form.submit();
     }
 
-    /* ── Sidebar ─────────────────────────────────────── */
     function openSidebar()  { document.getElementById('sidebar').classList.add('open');  document.getElementById('overlay').classList.add('show'); }
     function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('show'); }
 
-    /* ── Helpers ─────────────────────────────────────── */
     function escHtml(str) {
         return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
@@ -725,11 +646,11 @@
             status: el.dataset.status, remarks: el.dataset.remarks,
             cancelReason: el.dataset.cancelReason,
             snippet: el.dataset.snippet, citizen: el.dataset.citizen,
+            anonymous: el.dataset.anonymous === '1',
             updates: updates
         };
     }
 
-    /* ── Lightbox ────────────────────────────────────── */
     function openLightbox(photos, index) { lbPhotos = photos; lbIndex = index; renderLightbox(); document.getElementById('lightbox').classList.add('show'); }
     function renderLightbox() {
         document.getElementById('lightbox-img').src = lbPhotos[lbIndex];
@@ -747,7 +668,6 @@
         }
     });
 
-    /* ── Remarks toggle ──────────────────────────────── */
     function toggleRemarks() {
         var collapse = document.getElementById('remarks-collapse');
         var chevron  = document.getElementById('remarks-chevron');
@@ -756,7 +676,6 @@
         chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(90deg)';
     }
 
-    /* ── Status change handler ───────────────────────── */
     function handleStatusChange(status) {
         var progressSec = document.getElementById('progressSection');
         var cancelField = document.getElementById('cancel-reason-field');
@@ -764,7 +683,6 @@
         cancelField.classList.toggle('show', status === 'Cancelled');
     }
 
-    /* ── Load comments for an update entry (admin view) ── */
     function loadCommentsForUpdate(complaintId, updateIndex, containerEl) {
         fetch(commentsBaseUrl + '/' + complaintId, {
             headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken }
@@ -789,7 +707,6 @@
         .catch(function(){});
     }
 
-    /* ── Click delegation ────────────────────────────── */
     document.addEventListener('click', function(e) {
 
         var viewBtn = e.target.closest('.btn-view-desc');
@@ -909,7 +826,6 @@
 
     function closeUpdate() { document.getElementById('updateOverlay').classList.remove('show'); }
 
-    /* ── Delete confirmed ────────────────────────────── */
     document.getElementById('dc-confirm-btn').addEventListener('click', function() {
         if (!pendingDeleteId) return;
         var btn = this;
@@ -939,7 +855,6 @@
         });
     });
 
-    /* ── Photo handling ──────────────────────────────── */
     function appendPhotos(input) {
         Array.from(input.files).forEach(function(f) {
             if (!selectedFiles.some(function(x) { return x.name===f.name && x.size===f.size; })) selectedFiles.push(f);
@@ -970,7 +885,6 @@
 
     function removePhoto(index) { selectedFiles.splice(index, 1); renderPreviews(); }
 
-    /* ── Save confirm ────────────────────────────────── */
     function openSaveConfirm() {
         var status = document.getElementById('upd-status').value;
         if (status === 'Cancelled') {
@@ -1021,7 +935,6 @@
         }
     }
 
-    /* ── Chat ────────────────────────────────────────── */
     function closeChatModal() {
         document.getElementById('chatOverlay').classList.remove('show');
         clearInterval(chatPollTimer);
@@ -1084,7 +997,6 @@
         .catch(function() { sendBtn.disabled = false; });
     }
 
-    /* ── Refresh message badges ──────────────────────── */
     function refreshMsgBadges() {
         fetch(adminUnreadUrl, {
             headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken }

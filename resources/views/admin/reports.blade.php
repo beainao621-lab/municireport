@@ -148,10 +148,11 @@
 <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 
 <aside class="sidebar" id="sidebar">
-    <div class="brand">
-        <div class="brand-icon"><i class="fa-solid fa-landmark" style="font-size:18px;color:#fff;"></i></div>
-        <div><div class="brand-name">MuniciReport</div><div class="brand-sub">Admin Panel</div></div>
-    </div>
+   <div class="brand" style="flex-direction:column; align-items:center; justify-content:center; padding: 16px 20px 14px; border-bottom: 1.5px solid rgba(255,255,255,0.15); display:flex; gap:0;">
+    <img src="{{ asset('images/logo.png') }}" alt="MuniciReport"
+        style="height:90px; width:auto; object-fit:contain; display:block; margin-bottom:2px;">
+    <div style="color:#fff; font-size:12px; font-weight:700; letter-spacing:2px; text-align:center; font-family:'Inter', sans-serif;">MUNICIREPORT</div>
+</div>
     <div class="nav-section">
         <a href="{{ route('admin.dashboard') }}" class="nav-item"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
         <a href="{{ route('admin.complaints') }}" class="nav-item"><i class="fa-solid fa-clipboard-list"></i> Complaints</a>
