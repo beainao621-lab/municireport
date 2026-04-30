@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login – MuniciReport</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -203,6 +204,18 @@
         }
         input::placeholder { color: #aec8de; }
 
+        .eye-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #5a9fd4;
+            font-size: 15px;
+            user-select: none;
+            padding: 2px 4px;
+        }
+
         .forgot {
             text-align: right;
             margin-top: -8px;
@@ -322,11 +335,13 @@
 
             <div class="field">
                 <label>Password</label>
-               <div class="input-wrap">
-    <svg ...lock icon...></svg>
-    <input type="password" name="password" id="password" placeholder="Enter your password" autocomplete="off" required>
-    <span onclick="togglePass('password', this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;color:#5a9fd4;user-select:none;font-size:18px;">👁</span>
-</div>
+                <div class="input-wrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                    <input type="password" name="password" id="password" placeholder="Enter your password" autocomplete="off" required>
+                    <span class="eye-btn" onclick="togglePass('password', this)">
+                        <i class="fa-solid fa-eye"></i>
+                    </span>
+                </div>
             </div>
 
             <div class="forgot"><a href="#">Forgot password?</a></div>
@@ -337,17 +352,21 @@
         <p class="footer-link">Don't have an account? <a href="/register">Create one</a></p>
 
     </div>
+
     <script>
-function togglePass(id, el) {
-    var input = document.getElementById(id);
-    if (input.type === 'password') {
-        input.type = 'text';
-        el.innerHTML = '<i class="fa-solid fa-eye-slash"></i>';
-    } else {
-        input.type = 'password';
-        el.innerHTML = '<i class="fa-solid fa-eye"></i>';
-    }
-}
-</script>
+        function togglePass(id, el) {
+            var input = document.getElementById(id);
+            var icon = el.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+    </script>
 </body>
 </html>

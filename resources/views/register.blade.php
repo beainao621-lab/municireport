@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register – MuniciReport</title>
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -209,7 +210,7 @@
             cursor: pointer;
             color: #3182BD;
             user-select: none;
-            font-size: 16px;
+            font-size: 15px;
             line-height: 1;
             padding: 2px 4px;
         }
@@ -277,7 +278,6 @@
             .btn { font-size: 14px; padding: 11px; }
         }
     </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
     <div class="deco deco-1"></div>
@@ -343,7 +343,9 @@
                     <div class="input-wrap">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                         <input type="password" name="password" id="reg-pass" placeholder="Min. 6 characters" autocomplete="new-password" required>
-                        <span class="eye-btn" onclick="togglePass('reg-pass', this)">👁</span>
+                        <span class="eye-btn" onclick="togglePass('reg-pass', this)">
+                            <i class="fa-solid fa-eye"></i>
+                        </span>
                     </div>
                 </div>
 
@@ -352,7 +354,9 @@
                     <div class="input-wrap">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                         <input type="password" name="password_confirmation" id="reg-confirm" placeholder="Repeat password" autocomplete="new-password" required>
-                        <span class="eye-btn" onclick="togglePass('reg-confirm', this)">👁</span>
+                        <span class="eye-btn" onclick="togglePass('reg-confirm', this)">
+                            <i class="fa-solid fa-eye"></i>
+                        </span>
                     </div>
                 </div>
 
@@ -368,12 +372,15 @@
     <script>
         function togglePass(id, el) {
             var input = document.getElementById(id);
+            var icon = el.querySelector('i');
             if (input.type === 'password') {
                 input.type = 'text';
-                el.textContent = '👁';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
             } else {
                 input.type = 'password';
-                el.textContent = '👁';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
             }
         }
     </script>
