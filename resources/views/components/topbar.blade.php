@@ -21,44 +21,46 @@
 .tb-notif-btn:hover{background:#EFF3FF}
 .tb-notif-count{position:absolute;top:4px;right:4px;min-width:18px;height:18px;background:#ef4444;color:#fff;font-family:'DM Sans',sans-serif;font-size:9px;font-weight:700;border-radius:999px;border:2px solid #fff;display:none;align-items:center;justify-content:center;padding:0 3px}
 .tb-notif-count.show{display:flex}
-.tb-notif-panel{display:none;position:absolute;top:calc(100% + 10px);right:0;width:370px;background:#fff;border:1.5px solid #C6DBEF;border-radius:16px;box-shadow:0 16px 50px rgba(8,81,156,.18);z-index:500;overflow:hidden;flex-direction:column;font-family:'DM Sans',sans-serif}
+
+/* ── Notification Panel ── */
+.tb-notif-panel{display:none;position:fixed;top:64px;right:16px;width:370px;max-width:calc(100vw - 32px);background:#fff;border:1.5px solid #C6DBEF;border-radius:16px;box-shadow:0 16px 50px rgba(8,81,156,.18);z-index:500;overflow:hidden;flex-direction:column;font-family:'DM Sans',sans-serif}
 .tb-notif-panel.open{display:flex}
-.tb-np-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 12px;border-bottom:1px solid #EFF3FF}
+.tb-np-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 10px;border-bottom:1px solid #EFF3FF;flex-wrap:wrap;gap:6px}
 .tb-np-title{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;color:#0a2a4a}
-.tb-np-actions{display:flex;gap:8px;align-items:center}
-.tb-np-btn{font-family:'DM Sans',sans-serif;font-size:11.5px;font-weight:600;color:#3182BD;background:none;border:none;cursor:pointer;padding:4px 8px;border-radius:6px;transition:background .12s;display:inline-flex;align-items:center;gap:5px}
+.tb-np-actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.tb-np-btn{font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;color:#3182BD;background:none;border:none;cursor:pointer;padding:4px 7px;border-radius:6px;transition:background .12s;display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
 .tb-np-btn:hover{background:#EFF3FF}
 .tb-np-btn.del-mode-btn{color:#ef4444}
-.tb-np-body{max-height:340px;overflow-y:auto}
-.tb-np-empty{padding:40px 20px;text-align:center;color:#4a6fa5;font-family:'DM Sans',sans-serif;font-size:13px}
+.tb-np-body{max-height:320px;overflow-y:auto;overflow-x:hidden}
+.tb-np-empty{padding:36px 20px;text-align:center;color:#4a6fa5;font-family:'DM Sans',sans-serif;font-size:13px}
 .tb-np-empty i{font-size:28px;color:#9ECAE1;display:block;margin-bottom:10px}
-.tb-notif-item{display:flex;align-items:flex-start;gap:12px;padding:13px 18px;border-bottom:1px solid #EFF3FF;cursor:pointer;transition:background .12s;position:relative;font-family:'DM Sans',sans-serif}
+.tb-notif-item{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-bottom:1px solid #EFF3FF;cursor:pointer;transition:background .12s;position:relative;font-family:'DM Sans',sans-serif}
 .tb-notif-item:last-child{border-bottom:none}
 .tb-notif-item:hover{background:#F8FAFF}
 .tb-notif-item.unread{background:#EFF3FF}
 .tb-notif-item.unread:hover{background:#e4edfc}
 .tb-notif-select{display:none;margin-right:0;flex-shrink:0;margin-top:2px;width:16px;height:16px;cursor:pointer;accent-color:#ef4444}
 .tb-notif-select.show{display:block}
-.tb-ni-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.tb-ni-icon{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
 .tb-ni-icon.info{background:#EFF3FF;color:#3182BD}
 .tb-ni-icon.success{background:#D1FAE5;color:#065F46}
 .tb-ni-icon.warning{background:#FEF3C7;color:#B45309}
-.tb-ni-content{flex:1;min-width:0}
+.tb-ni-content{flex:1;min-width:0;overflow:hidden}
 .tb-ni-title{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:#0a2a4a;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tb-ni-msg{font-family:'DM Sans',sans-serif;font-size:12px;color:#4a6fa5;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.tb-ni-msg{font-family:'DM Sans',sans-serif;font-size:12px;color:#4a6fa5;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}
 .tb-ni-time{font-family:'DM Sans',sans-serif;font-size:11px;color:#9ECAE1;margin-top:3px}
-.tb-ni-close{position:absolute;top:10px;right:12px;background:none;border:none;color:#9ECAE1;font-size:13px;cursor:pointer;opacity:0;transition:opacity .12s;line-height:1;padding:2px}
+.tb-ni-close{position:absolute;top:10px;right:10px;background:none;border:none;color:#9ECAE1;font-size:12px;cursor:pointer;opacity:0;transition:opacity .12s;line-height:1;padding:2px}
 .tb-notif-item:hover .tb-ni-close{opacity:1}
 .tb-ni-close:hover{color:#ef4444}
 .delete-mode .tb-ni-close{display:none !important}
-.tb-np-footer{padding:12px 18px;border-top:1px solid #EFF3FF;display:flex;gap:8px}
+.tb-np-footer{padding:10px 14px;border-top:1px solid #EFF3FF;display:flex;gap:8px}
 
 /* Delete confirm bar inside panel */
-.tb-np-del-bar{display:none;background:#FEF2F2;border-top:1.5px solid #FECACA;padding:12px 18px}
+.tb-np-del-bar{display:none;background:#FEF2F2;border-top:1.5px solid #FECACA;padding:10px 14px}
 .tb-np-del-bar.show{display:block}
-.tb-np-del-bar-msg{font-family:'DM Sans',sans-serif;font-size:13px;color:#B91C1C;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.tb-np-del-bar-msg{font-family:'DM Sans',sans-serif;font-size:12px;color:#B91C1C;margin-bottom:8px;display:flex;align-items:center;gap:6px}
 .tb-np-del-btns{display:flex;gap:8px}
-.tb-np-del-yes{font-family:'DM Sans',sans-serif;padding:7px 16px;background:#ef4444;color:#fff;border:none;border-radius:7px;font-size:12.5px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.tb-np-del-yes{font-family:'DM Sans',sans-serif;padding:7px 14px;background:#ef4444;color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
 
 .tb-profile-wrap{position:relative}
 .tb-user-pill{display:flex;align-items:center;gap:9px;padding:5px 14px 5px 5px;border:1.5px solid #C6DBEF;border-radius:999px;background:#fff;cursor:pointer;transition:background .15s;user-select:none}
@@ -365,11 +367,51 @@ body.dark-mode .activity-item { border-color: #1e3a5f !important; }
 body.dark-mode .activity-desc { color: #e2e8f0 !important; }
 body.dark-mode .activity-ref { color: #9ECAE1 !important; }
 
+/* ── RESPONSIVE ── */
 @media(max-width:768px){
     .tb-bar{padding:0 16px}
     .tb-hamburger{display:flex !important}
     .tb-user-name{display:none}
-    .tb-notif-panel{width:calc(100vw - 32px);right:-10px}
+
+    /* Notification panel: full width, anchored below topbar */
+    .tb-notif-panel{
+        position:fixed;
+        top:64px;
+        left:8px;
+        right:8px;
+        width:auto;
+        max-width:100%;
+        border-radius:14px;
+    }
+
+    /* Shrink header actions to fit */
+    .tb-np-head{padding:12px 12px 8px;gap:4px}
+    .tb-np-actions{gap:4px}
+    .tb-np-btn{font-size:10px;padding:3px 6px;gap:3px}
+
+    /* Tighter items on mobile */
+    .tb-notif-item{padding:10px 12px;gap:8px}
+    .tb-ni-icon{width:30px;height:30px;font-size:12px;flex-shrink:0}
+    .tb-ni-title{font-size:12px}
+    .tb-ni-msg{font-size:11px}
+    .tb-ni-time{font-size:10px}
+    .tb-ni-close{right:8px;font-size:11px}
+
+    /* Del bar */
+    .tb-np-del-bar{padding:8px 12px}
+    .tb-np-del-bar-msg{font-size:11px}
+    .tb-np-del-yes{font-size:11px;padding:6px 12px}
+
+    /* Scrollable body height on mobile */
+    .tb-np-body{max-height:55vh}
+
+    /* Footer */
+    .tb-np-footer{padding:8px 12px}
+}
+
+@media(max-width:380px){
+    .tb-np-btn span, .tb-np-btn{font-size:9.5px;padding:3px 5px}
+    .tb-badge{font-size:10px;padding:2px 8px}
 }
 </style>
 
@@ -392,7 +434,6 @@ body.dark-mode .activity-ref { color: #9ECAE1 !important; }
                         <button class="tb-np-btn" id="tb-mark-all-btn" onclick="tbMarkAllRead()">
                             <i class="fa-solid fa-check-double"></i> Mark all read
                         </button>
-                        {{-- Delete mode toggle — label changes to "Cancel" when active --}}
                         <button class="tb-np-btn del-mode-btn" id="tb-del-mode-btn" onclick="tbToggleDeleteMode()">
                             <i class="fa-solid fa-trash"></i> Delete
                         </button>
@@ -405,7 +446,6 @@ body.dark-mode .activity-ref { color: #9ECAE1 !important; }
                     </div>
                     <div id="tb-notif-list"></div>
                 </div>
-                {{-- Delete bar: only "Delete Selected" — no redundant Cancel button --}}
                 <div class="tb-np-del-bar" id="tb-np-del-bar">
                     <div class="tb-np-del-bar-msg"><i class="fa-solid fa-triangle-exclamation"></i> <span id="tb-del-bar-count">0</span> notification(s) selected</div>
                     <div class="tb-np-del-btns">
@@ -854,7 +894,6 @@ body.dark-mode .activity-ref { color: #9ECAE1 !important; }
                     tbUpdateDelBarCount();
                     return;
                 }
-                // Navigate to the notification's link, mark as read
                 tbClickNotif(n.id, n.link);
             });
             list.appendChild(item);
@@ -872,7 +911,6 @@ body.dark-mode .activity-ref { color: #9ECAE1 !important; }
             method:'POST',
             headers:{'X-CSRF-TOKEN':CSRF,'X-Requested-With':'XMLHttpRequest','Accept':'application/json'}
         }).then(function(){
-            // Navigate to the link if it exists, regardless
             if (link) window.location.href = link;
         }).catch(function(){
             if (link) window.location.href = link;
@@ -905,7 +943,6 @@ body.dark-mode .activity-ref { color: #9ECAE1 !important; }
         tbDeleteMode = !tbDeleteMode;
         tbSelectedIds.clear();
         tbUpdateDelBarCount();
-        // Toggle button label between "Delete" and "Cancel"
         document.getElementById('tb-del-mode-btn').innerHTML = tbDeleteMode
             ? '<i class="fa-solid fa-xmark"></i> Cancel'
             : '<i class="fa-solid fa-trash"></i> Delete';
@@ -914,8 +951,6 @@ body.dark-mode .activity-ref { color: #9ECAE1 !important; }
         tbRenderNotifs();
     };
 
-    // No separate tbCancelDeleteMode needed — tbToggleDeleteMode handles it
-    // But keep it for programmatic use after delete
     function tbExitDeleteMode(){
         tbDeleteMode = false;
         tbSelectedIds.clear();
