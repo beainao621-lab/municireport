@@ -77,7 +77,7 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('resident')->group(function () {
         Route::get('/complaints/create',    [ResidentController::class, 'showFileComplaint'])->name('resident.complaints.create');
         Route::post('/complaints',          [ResidentController::class, 'storeComplaint'])->name('resident.complaints.store');
-        Route::get('/complaints',           [ResidentController::class, 'mycomplaints'])->name('resident.complaints.index');
+        Route::get('/complaints',           [ResidentController::class, 'myComplaints'])->name('resident.complaints.index');
         Route::delete('/complaints/{id}',   [ResidentController::class, 'deleteComplaint'])->name('resident.complaints.delete');
         Route::get('/messages',             [ResidentController::class, 'messages'])->name('resident.messages');
     });
