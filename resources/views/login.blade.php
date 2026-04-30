@@ -342,10 +342,10 @@ function togglePass(id, el) {
     var input = document.getElementById(id);
     if (input.type === 'password') {
         input.type = 'text';
-        el.textContent = '👁';
+        el.innerHTML = '<i class="fa-solid fa-eye-slash"></i>';
     } else {
         input.type = 'password';
-        el.textContent = '👁';
+        el.innerHTML = '<i class="fa-solid fa-eye"></i>';
     }
 }
 </script>
