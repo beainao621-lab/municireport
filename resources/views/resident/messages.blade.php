@@ -116,11 +116,11 @@
         <h1 class="page-title">Messages</h1>
         <p class="page-sub">Your conversations with the Mayor's Office regarding your complaints.</p>
 
-        @if($complaints->isEmpty())
-            <div class="empty-state">
-                <div class="empty-icon"><i class="fa-solid fa-comments"></i></div>
-                <p>No messages yet. The Mayor's Office will message you here when they update your complaint.</p>
-            </div>
+        @if($complaints->count() === 0)
+    <div class="empty-state">
+        <div class="empty-icon"><i class="fa-solid fa-comments"></i></div>
+        <p>No complaints filed yet. File a complaint first to start a conversation.</p>
+    </div>
         @else
             <div class="thread-list">
                 @foreach($complaints as $complaint)
@@ -153,9 +153,14 @@
                         <div class="messages-list" id="msgs-{{ $complaint->id }}">
                             <div class="msg-empty"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</div>
                         </div>
+                        <div id="foul-warn-{{ $complaint->id }}" style="display:none;background:#FEE2E2;border:1.5px solid rgba(185,28,28,0.3);border-radius:8px;padding:8px 12px 8px 20px;font-size:12px;color:#B91C1C;align-items:center;gap:6px;">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            Your message contains inappropriate language. Please revise before sending.
+                        </div>
                         <div class="chat-input-row">
                             <textarea class="chat-input" id="input-{{ $complaint->id }}" placeholder="Type your message…" rows="1"
-                                onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage({{ $complaint->id }});}"></textarea>
+                                onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage({{ $complaint->id }});}"
+                                oninput="checkFoulWords({{ $complaint->id }})"></textarea>
                             <button class="chat-send-btn" onclick="sendMessage({{ $complaint->id }})">
                                 <i class="fa-solid fa-paper-plane"></i> Send
                             </button>
@@ -201,7 +206,7 @@ function loadMessages(complaintId) {
 function renderMessages(complaintId, messages) {
     var container = document.getElementById('msgs-' + complaintId);
     if (!messages || messages.length === 0) {
-        container.innerHTML = '<div class="msg-empty">No messages yet. Send the first message!</div>';
+        container.innerHTML = '<div class="msg-empty"><i class="fa-solid fa-comment-dots" style="font-size:24px;display:block;margin-bottom:8px;opacity:.4;"></i>No messages yet. Be the first to send a message!</div>';
         return;
     }
     var html = '';
@@ -219,10 +224,39 @@ function renderMessages(complaintId, messages) {
     container.scrollTop = container.scrollHeight;
 }
 
+var FOUL_WORDS = [
+    'putang ina','putangina','puta','gago','gaga','bobo','boba',
+    'tanga','ulol','hunghang','tarantado','leche','punyeta','lintik',
+    'bwisit','inutil','pakyu','fuck','shit','bitch','asshole',
+    'damn','bastard','crap','ass'
+];
+
+function hasFoulWords(text) {
+    var lower = text.toLowerCase();
+    return FOUL_WORDS.some(function(w) { return lower.includes(w); });
+}
+
+function checkFoulWords(complaintId) {
+    var input = document.getElementById('input-' + complaintId);
+    var warn  = document.getElementById('foul-warn-' + complaintId);
+    var btn   = input.closest('.chat-input-row').querySelector('.chat-send-btn');
+    if (hasFoulWords(input.value)) {
+        warn.style.display = 'flex';
+        btn.disabled = true;
+    } else {
+        warn.style.display = 'none';
+        btn.disabled = false;
+    }
+}
+
 function sendMessage(complaintId) {
     var input = document.getElementById('input-' + complaintId);
     var text  = input.value.trim();
     if (!text) return;
+    if (hasFoulWords(text)) {
+        document.getElementById('foul-warn-' + complaintId).style.display = 'flex';
+        return;
+    }
     input.value = '';
     fetch(BASE_MSG_URL + '/' + complaintId, {
         method: 'POST',

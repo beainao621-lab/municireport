@@ -46,13 +46,17 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/{id}',         [NotificationController::class, 'destroy'])->name('notifications.destroy');
     });
 
-    // Messages (must be before admin/resident prefixes to avoid conflicts)
+    // Messages
     Route::prefix('messages')->group(function () {
         Route::get('/admin/unread-counts', [ComplaintMessageController::class, 'adminUnreadCounts'])->name('messages.admin.unread');
         Route::get('/resident/unread',     [ComplaintMessageController::class, 'residentUnreadCount'])->name('messages.resident.unread');
         Route::get('/{complaintId}',       [ComplaintMessageController::class, 'index'])->name('messages.index');
         Route::post('/{complaintId}',      [ComplaintMessageController::class, 'store'])->name('messages.store');
     });
+
+    // Ban routes — separate para tumugma sa admin/complaints/{id}/ban
+    Route::post('/admin/complaints/{id}/ban',        [ComplaintMessageController::class, 'toggleBan'])->name('complaints.ban');
+    Route::get('/admin/complaints/{id}/ban-status',  [ComplaintMessageController::class, 'banStatus'])->name('complaints.ban.status');
 
     // Complaint Comments (resident posts, admin views)
     Route::prefix('complaint-comments')->group(function () {

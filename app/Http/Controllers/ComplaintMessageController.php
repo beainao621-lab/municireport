@@ -44,10 +44,33 @@ class ComplaintMessageController extends Controller
     {
         $request->validate(['message' => 'required|string|max:2000']);
 
+$foulWords = [
+    'putang ina','putangina','puta','gago','gaga','bobo','boba',
+    'tanga','ulol','hunghang','tarantado','leche','punyeta','lintik',
+    'bwisit','inutil','pakyu','fuck','shit','bitch','asshole',
+    'damn','bastard','crap','ass'
+];
+$msgLower = strtolower($request->message);
+foreach ($foulWords as $word) {
+    if (str_contains($msgLower, $word)) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Your message contains inappropriate language.'
+        ], 422);
+    }
+}
+
         $user      = Auth::user();
         $complaint = Complaint::findOrFail($complaintId);
 
         abort_unless($user->role === 'admin' || $complaint->user_id === $user->id, 403);
+
+        if ($user->role !== 'admin' && $complaint->is_chat_banned) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You have been banned from messaging on this complaint.'
+            ], 403);
+        }
 
         $senderRole = $user->role === 'admin' ? 'admin' : 'resident';
 
@@ -99,7 +122,23 @@ class ComplaintMessageController extends Controller
 
     /**
      * Total unread for resident across all their complaints.
-     */
+     */public function banStatus($complaintId)
+    {
+        abort_unless(Auth::user()->role === 'admin', 403);
+        $complaint = Complaint::findOrFail($complaintId);
+        return response()->json(['is_banned' => (bool) $complaint->is_chat_banned]);
+    }
+
+    public function toggleBan(Request $request, $complaintId)
+    {
+        abort_unless(Auth::user()->role === 'admin', 403);
+        $complaint = Complaint::findOrFail($complaintId);
+        $complaint->is_chat_banned = $request->action === 'ban';
+        $complaint->save();
+        return response()->json(['success' => true, 'is_banned' => (bool) $complaint->is_chat_banned]);
+    }
+
+   
     public function residentUnreadCount()
     {
         $user = Auth::user();

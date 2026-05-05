@@ -87,13 +87,11 @@ class ResidentController extends Controller
     public function messages()
     {
         $complaints = Complaint::where('user_id', Auth::id())
-            ->whereHas('messages')
-            ->with(['messages' => function ($q) {
-                $q->orderBy('created_at');
-            }])
-            ->latest()
-            ->get();
-
+    ->with(['messages' => function ($q) {
+        $q->orderBy('created_at');
+    }])
+    ->latest()
+    ->get();
         foreach ($complaints as $c) {
             ComplaintMessage::where('complaint_id', $c->id)
                 ->where('sender_role', 'admin')

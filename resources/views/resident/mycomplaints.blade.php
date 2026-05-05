@@ -144,22 +144,7 @@
         .upd-entry-photos-grid img:hover { opacity: .85; }
         .upd-entry-photos-label { font-size: 11px; color: var(--text-muted); font-weight: 600; margin-bottom: 6px; }
 
-        /* ── Comment section inside each update ── */
-        .comment-section { border-top: 1.5px solid var(--border); padding-top: 12px; margin-top: 4px; }
-        .comment-section-title { font-size: 11px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: var(--brand-mid); margin-bottom: 8px; display: flex; align-items: center; gap: 5px; }
-        .comment-list { margin-bottom: 10px; }
-        .comment-item { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; margin-bottom: 6px; font-size: 12.5px; }
-        .comment-item:last-child { margin-bottom: 0; }
-        .comment-meta { font-size: 10.5px; color: var(--text-muted); margin-bottom: 3px; font-weight: 600; }
-        .comment-body { color: var(--text-primary); line-height: 1.5; }
-        .comment-empty { font-size: 12px; color: var(--text-muted); font-style: italic; }
-
-        /* Comment form */
-        .comment-form { display: flex; gap: 8px; margin-top: 8px; }
-        .comment-input { flex: 1; padding: 9px 12px; border: 1.5px solid var(--border); border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 13px; background: var(--bg-input); color: var(--text-primary); outline: none; resize: none; min-height: 38px; }
-        .comment-input:focus { border-color: var(--brand-mid); background: var(--bg-surface); }
-        .comment-submit-btn { padding: 9px 14px; background: linear-gradient(135deg,#08519C,#3182BD); color: white; border: none; border-radius: 8px; font-size: 12.5px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; white-space: nowrap; }
-        .comment-submit-btn:disabled { opacity: .6; cursor: not-allowed; }
+        
 
         .upd-close-btn { margin-top: 16px; padding: 11px; width: 100%; border: 1.5px solid var(--border); border-radius: 9px; background: var(--bg-surface); color: var(--text-muted); font-size: 13.5px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; flex-shrink: 0; transition: background .15s; }
         .upd-close-btn:hover { background: var(--bg-raised); }
@@ -513,7 +498,7 @@
     var pendingDeleteId = null;
     var csrfToken       = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     var deleteBaseUrl   = '{{ url("resident/complaints") }}';
-    var commentsBaseUrl = '{{ url("complaint-comments") }}';
+   
     var currentComplaintId = null;
 
     function openSidebar()  { document.getElementById('sidebar').classList.add('open');  document.getElementById('overlay').classList.add('show'); }
@@ -586,17 +571,8 @@
                     upd.photos.forEach(function(url, idx) {
                         html += '<img src="' + escHtml(url) + '" alt="photo" data-photos=\'' + JSON.stringify(upd.photos) + '\' data-idx="' + idx + '" class="upd-photo-click">';
                     });
-                    html += '</div>';
+                   html += '</div>';
                 }
-
-                html += '<div class="comment-section">'
-                      + '<div class="comment-section-title"><i class="fa-solid fa-comment-dots"></i> Your Comments</div>'
-                      + '<div class="comment-list" id="comment-list-' + i + '"><div class="comment-empty">Loading…</div></div>'
-                      + '<div class="comment-form">'
-                      + '<textarea class="comment-input" id="comment-input-' + i + '" placeholder="Write a comment on this update…" rows="1"></textarea>'
-                      + '<button class="comment-submit-btn" onclick="submitComment(' + i + ')"><i class="fa-solid fa-paper-plane"></i> Send</button>'
-                      + '</div>'
-                      + '</div>';
 
                 div.innerHTML = html;
                 body.appendChild(div);
@@ -607,8 +583,6 @@
                         openLightbox(photos, parseInt(this.dataset.idx));
                     });
                 });
-
-                loadComments(i);
             });
         }
 
@@ -619,79 +593,7 @@
         if (e.target === document.getElementById('updatesModal')) document.getElementById('updatesModal').classList.remove('show');
     }
 
-    /* ── Load & render comments ──────────────────── */
-    function loadComments(updateIndex) {
-        if (!currentComplaintId) return;
-        var listEl = document.getElementById('comment-list-' + updateIndex);
-        if (!listEl) return;
-
-        fetch(commentsBaseUrl + '/' + currentComplaintId, {
-            headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken }
-        })
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-            var comments = (data.comments || []).filter(function(c) { return c.update_index === updateIndex; });
-            renderComments(listEl, comments);
-        })
-        .catch(function() {
-            if (listEl) listEl.innerHTML = '<div class="comment-empty">Could not load comments.</div>';
-        });
-    }
-
-    function renderComments(container, comments) {
-        if (comments.length === 0) {
-            container.innerHTML = '<div class="comment-empty">No comments yet. Be the first to comment!</div>';
-            return;
-        }
-        container.innerHTML = '';
-        comments.forEach(function(c) {
-            var date = new Date(c.created_at).toLocaleString('en-PH', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
-            var div  = document.createElement('div');
-            div.className = 'comment-item';
-            div.innerHTML = '<div class="comment-meta"><i class="fa-solid fa-user"></i> ' + escHtml(c.user_name) + ' · ' + date + '</div>'
-                          + '<div class="comment-body">' + escHtml(c.comment) + '</div>';
-            container.appendChild(div);
-        });
-    }
-
-    /* ── Submit comment ──────────────────────────── */
-    function submitComment(updateIndex) {
-        if (!currentComplaintId) return;
-        var input   = document.getElementById('comment-input-' + updateIndex);
-        var text    = input ? input.value.trim() : '';
-        if (!text) { if (input) input.focus(); return; }
-
-        var btn = input.nextElementSibling;
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
-
-        fetch(commentsBaseUrl + '/' + currentComplaintId, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken,
-                'X-Requested-With': 'XMLHttpRequest',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({ update_index: updateIndex, comment: text })
-        })
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Send';
-            if (data.success) {
-                input.value = '';
-                loadComments(updateIndex);
-            } else {
-                alert('Error: ' + (data.message || 'Could not post comment.'));
-            }
-        })
-        .catch(function(err) {
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Send';
-            alert('Network error: ' + err.message);
-        });
-    }
+  
 
     /* ── Delete complaint ────────────────────────── */
     function openDeleteConfirm(btn) {

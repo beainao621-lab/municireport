@@ -171,11 +171,7 @@
         .upd-entry-photos { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; }
         .upd-entry-photos img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 6px; border: 1.5px solid var(--border); cursor: pointer; }
 
-        .upd-comments-section { margin-top: 10px; border-top: 1px solid var(--border); padding-top: 8px; }
-        .upd-comments-title { font-size: 10px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: var(--brand-mid); margin-bottom: 6px; }
-        .upd-comment-item { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; margin-bottom: 6px; font-size: 12.5px; }
-        .upd-comment-meta { font-size: 10.5px; color: var(--text-muted); margin-bottom: 3px; font-weight: 600; }
-        .upd-comment-body { color: var(--text-primary); line-height: 1.55; }
+        
 
         .new-update-section { border-top: 1.5px solid var(--border); padding-top: 16px; margin-top: 4px; }
         .new-update-title { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--color-green); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
@@ -564,6 +560,20 @@
 </div>
 
 {{-- DELETE CONFIRM MODAL --}}
+{{-- BAN CONFIRM MODAL --}}
+<div class="delete-confirm-overlay" id="banConfirmOverlay" style="z-index:810;">
+    <div class="delete-confirm-box">
+        <div class="dc-icon" id="ban-confirm-icon"><i class="fa-solid fa-ban"></i></div>
+        <p class="dc-title" id="ban-confirm-title">Ban Citizen?</p>
+        <p class="dc-msg" id="ban-confirm-msg">Are you sure you want to ban this citizen from messaging on this complaint?</p>
+        <div class="dc-btns">
+            <button class="dc-cancel" onclick="document.getElementById('banConfirmOverlay').classList.remove('show')">Cancel</button>
+            <button class="dc-confirm" id="ban-confirm-btn" style="background:linear-gradient(135deg,#B91C1C,#ef4444);"><i class="fa-solid fa-ban"></i> <span id="ban-confirm-btn-label">Yes, Ban</span></button>
+        </div>
+    </div>
+</div>
+
+{{-- DELETE CONFIRM MODAL --}}
 <div class="delete-confirm-overlay" id="deleteConfirmOverlay">
     <div class="delete-confirm-box">
         <div class="dc-icon"><i class="fa-solid fa-trash"></i></div>
@@ -584,14 +594,29 @@
                 <div class="chat-modal-title" id="chat-modal-title">Message Resident</div>
                 <div class="chat-modal-sub" id="chat-modal-sub"></div>
             </div>
-            <button class="chat-modal-close" onclick="closeChatModal()"><i class="fa-solid fa-xmark"></i></button>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <button id="chat-ban-btn"
+                    style="padding:6px 12px;border:1.5px solid rgba(185,28,28,0.35);border-radius:7px;background:var(--bg-surface);color:#B91C1C;font-size:12px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;display:flex;align-items:center;gap:5px;">
+                    <i class="fa-solid fa-ban"></i> <span id="chat-ban-btn-label">Ban</span>
+                </button>
+                <button class="chat-modal-close" onclick="closeChatModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+        </div>
+        <div id="chat-ban-banner" style="display:none;background:#FEE2E2;border-bottom:1.5px solid rgba(185,28,28,0.3);padding:10px 18px;font-size:12.5px;color:#B91C1C;align-items:center;gap:8px;flex-shrink:0;">
+            <i class="fa-solid fa-ban"></i>
+            <span>This citizen is <strong>banned</strong> from messaging.</span>
         </div>
         <div class="chat-messages" id="chat-messages">
             <div class="chat-empty"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</div>
         </div>
+        <div id="admin-foul-warn" style="display:none;background:#FEE2E2;border-top:1.5px solid rgba(185,28,28,0.3);padding:8px 16px;font-size:12px;color:#B91C1C;align-items:center;gap:6px;">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            Your message contains inappropriate language. Please revise before sending.
+        </div>
         <div class="chat-input-area">
             <textarea class="chat-textarea" id="chat-input" placeholder="Type your message… (Enter to send)" rows="1"
-                onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAdminMessage();}"></textarea>
+                onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAdminMessage();}"
+                oninput="checkAdminFoulWords()"></textarea>
             <button class="chat-send-btn" id="chat-send-btn" onclick="sendAdminMessage()">
                 <i class="fa-solid fa-paper-plane"></i>
             </button>
@@ -612,14 +637,16 @@
     var updateBaseUrl    = '{{ url("admin/complaints") }}';
     var msgBaseUrl       = '{{ url("messages") }}';
     var adminUnreadUrl   = '{{ route("messages.admin.unread") }}';
-    var commentsBaseUrl  = '{{ url("complaint-comments") }}';
+    
     var csrfToken        = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
     var lbPhotos = [], lbIndex = 0;
     var selectedFiles = [];
     var currentChatComplaintId = null;
     var chatPollTimer = null;
+    var currentBannedUsers = {};
     var pendingDeleteId = null;
+    var isBanToggling = false;
 
     function changePerPage(val) {
         var form = document.getElementById('filterForm');
@@ -683,29 +710,7 @@
         cancelField.classList.toggle('show', status === 'Cancelled');
     }
 
-    function loadCommentsForUpdate(complaintId, updateIndex, containerEl) {
-        fetch(commentsBaseUrl + '/' + complaintId, {
-            headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken }
-        })
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-            var comments = (data.comments || []).filter(function(c) { return c.update_index === updateIndex; });
-            containerEl.innerHTML = '';
-            if (comments.length === 0) {
-                containerEl.innerHTML = '<div style="font-size:12px;color:var(--text-muted);font-style:italic;">No comments from resident.</div>';
-                return;
-            }
-            comments.forEach(function(c) {
-                var date = new Date(c.created_at).toLocaleString('en-PH', {month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
-                var div  = document.createElement('div');
-                div.className = 'upd-comment-item';
-                div.innerHTML = '<div class="upd-comment-meta"><i class="fa-solid fa-user"></i> ' + escHtml(c.user_name) + ' · ' + date + '</div>'
-                              + '<div class="upd-comment-body">' + escHtml(c.comment) + '</div>';
-                containerEl.appendChild(div);
-            });
-        })
-        .catch(function(){});
-    }
+  
 
     document.addEventListener('click', function(e) {
 
@@ -777,14 +782,10 @@
                         });
                         html += '</div>';
                     }
-                    html += '<div class="upd-comments-section">'
-                          + '<div class="upd-comments-title"><i class="fa-solid fa-comments"></i> Resident Comments</div>'
-                          + '<div class="upd-comments-list-' + idx + '" style="font-size:12px;color:var(--text-muted);font-style:italic;">Loading…</div>'
-                          + '</div>';
+                   
                     div.innerHTML = html;
                     prevList.appendChild(div);
-                    var commentContainer = div.querySelector('.upd-comments-list-' + idx);
-                    loadCommentsForUpdate(d.id, idx, commentContainer);
+               
                 });
                 prevSection.style.display = 'block';
             } else { prevSection.style.display = 'none'; }
@@ -821,6 +822,7 @@
         if (e.target === document.getElementById('updateOverlay'))      closeUpdate();
         if (e.target === document.getElementById('saveConfirmOverlay')) document.getElementById('saveConfirmOverlay').classList.remove('show');
         if (e.target === document.getElementById('deleteConfirmOverlay')) { document.getElementById('deleteConfirmOverlay').classList.remove('show'); pendingDeleteId = null; }
+        if (e.target === document.getElementById('banConfirmOverlay')) { document.getElementById('banConfirmOverlay').classList.remove('show'); }
         if (e.target === document.getElementById('chatOverlay'))        closeChatModal();
     });
 
@@ -934,7 +936,78 @@
             btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save changes';
         }
     }
+function toggleBanCitizen() {
+    if (!currentChatComplaintId || isBanToggling) return;
+    var isBanned = currentBannedUsers[currentChatComplaintId] || false;
 
+    // Update confirm modal text based on ban/unban
+    var icon = document.getElementById('ban-confirm-icon');
+    document.getElementById('ban-confirm-title').textContent = isBanned ? 'Unban Citizen?' : 'Ban Citizen?';
+    document.getElementById('ban-confirm-msg').textContent   = isBanned
+        ? 'Are you sure you want to unban this citizen? They will be able to send messages again.'
+        : 'Are you sure you want to ban this citizen from messaging on this complaint?';
+    document.getElementById('ban-confirm-btn-label').textContent = isBanned ? 'Yes, Unban' : 'Yes, Ban';
+    icon.style.background = isBanned ? 'var(--color-green-bg)' : 'var(--color-red-bg)';
+    icon.querySelector('i').className = isBanned ? 'fa-solid fa-circle-check' : 'fa-solid fa-ban';
+    icon.querySelector('i').style.color = isBanned ? 'var(--color-green)' : 'var(--color-red)';
+
+    document.getElementById('banConfirmOverlay').classList.add('show');
+}
+
+function doToggleBan() {
+    if (!currentChatComplaintId) return;
+    if (isBanToggling) return;
+    isBanToggling = true;
+
+    var isBanned = currentBannedUsers[currentChatComplaintId] || false;
+    var action = isBanned ? 'unban' : 'ban';
+
+    document.getElementById('banConfirmOverlay').classList.remove('show');
+
+    var confirmBtn = document.getElementById('ban-confirm-btn');
+    confirmBtn.disabled = true;
+    confirmBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Please wait…';
+
+    fetch(updateBaseUrl + '/' + currentChatComplaintId + '/ban', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': csrfToken,
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({ action: action })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (data.success) {
+            currentBannedUsers[currentChatComplaintId] = !isBanned;
+            updateBanUI(!isBanned);
+        } else {
+            alert('Error: ' + (data.message || 'Could not complete action.'));
+        }
+        isBanToggling = false;
+        confirmBtn.disabled = false;
+        confirmBtn.innerHTML = '<i class="fa-solid fa-ban"></i> <span id="ban-confirm-btn-label">' + (isBanned ? 'Yes, Unban' : 'Yes, Ban') + '</span>';
+    })
+    .catch(function(err) {
+        alert('Network error: ' + err.message);
+        isBanToggling = false;
+        confirmBtn.disabled = false;
+        confirmBtn.innerHTML = '<i class="fa-solid fa-ban"></i> <span id="ban-confirm-btn-label">Yes, Ban</span>';
+    });
+}
+    function updateBanUI(isBanned) {
+        var banner   = document.getElementById('chat-ban-banner');
+        var btnLabel = document.getElementById('chat-ban-btn-label');
+        var banBtn   = document.getElementById('chat-ban-btn');
+        banner.style.display      = isBanned ? 'flex' : 'none';
+        btnLabel.textContent      = isBanned ? 'Unban' : 'Ban';
+        banBtn.style.color        = isBanned ? '#047857' : '#B91C1C';
+        banBtn.style.borderColor  = isBanned ? 'rgba(4,120,87,0.35)' : 'rgba(185,28,28,0.35)';
+    }
+
+    
     function closeChatModal() {
         document.getElementById('chatOverlay').classList.remove('show');
         clearInterval(chatPollTimer);
@@ -942,8 +1015,20 @@
         refreshMsgBadges();
     }
 
-    function loadChatMessages() {
+   function loadChatMessages() {
         if (!currentChatComplaintId) return;
+        if (!isBanToggling) {
+            fetch(updateBaseUrl + '/' + currentChatComplaintId + '/ban-status', {
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken }
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (!isBanToggling) {
+                    currentBannedUsers[currentChatComplaintId] = data.is_banned;
+                    updateBanUI(data.is_banned);
+                }
+            });
+        }
         fetch(msgBaseUrl + '/' + currentChatComplaintId, {
             headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken }
         })
@@ -1013,6 +1098,41 @@
         .catch(function(){});
     }
 
+    var FOUL_WORDS = [
+        'putang ina','putangina','puta','gago','gaga','bobo','boba',
+        'tanga','ulol','hunghang','tarantado','leche','punyeta','lintik',
+        'bwisit','inutil','pakyu','fuck','shit','bitch','asshole',
+        'damn','bastard','crap','ass'
+    ];
+
+    function hasFoulWords(text) {
+        var lower = text.toLowerCase();
+        return FOUL_WORDS.some(function(w) { return lower.includes(w); });
+    }
+
+    function checkAdminFoulWords() {
+        var input = document.getElementById('chat-input');
+        var warn  = document.getElementById('admin-foul-warn');
+        var btn   = document.getElementById('chat-send-btn');
+        if (hasFoulWords(input.value)) {
+            warn.style.display = 'flex';
+            btn.disabled = true;
+        } else {
+            warn.style.display = 'none';
+            btn.disabled = false;
+        }
+    }
+
+    document.getElementById('chat-ban-btn').addEventListener('click', function(e) {
+    e.stopPropagation();
+    toggleBanCitizen();
+});
+
+document.getElementById('ban-confirm-btn').addEventListener('click', function(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    doToggleBan();
+});
     refreshMsgBadges();
     setInterval(refreshMsgBadges, 10000);
 </script>
